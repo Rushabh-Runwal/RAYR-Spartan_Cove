@@ -18,12 +18,12 @@ const UserSchema = new mongoose.Schema({
   avatar: {
     type: String,
   },
-  chats: [
+  /*chats: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Chat",
     },
-  ],
+  ],*/
   createdAt: {
     type: Date,
     default: Date.now,
