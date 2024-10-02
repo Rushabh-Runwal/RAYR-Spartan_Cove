@@ -3,7 +3,7 @@ const User = require("../models/User");
 const router = express.Router();
 
 // Get all users (for directory search)
-router.get("/", async (req, res) => {
+router.get("/get", async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
 });
 
 // Create a new user
-router.post("/", async (req, res) => {
+router.post("/create", async (req, res) => {
   const { googleId, name, email, avatar } = req.body;
 
   try {

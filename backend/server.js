@@ -15,7 +15,7 @@ const messageRoutes = require("./routes/message");
 
 // Middleware
 app.use(cors());
-app.use(express.json());  // Ensure this middleware is used before routes
+app.use(express.json()); // Ensure this middleware is used before routes
 app.use(passport.initialize());
 
 // Connect to MongoDB
