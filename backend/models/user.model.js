@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   email: String,
   profilePicture: String,
   statusMessage: String,
-  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group" }],
+  groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Group", default: [] }],
 });
 
 export default mongoose.model("User", UserSchema);

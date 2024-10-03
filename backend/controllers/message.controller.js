@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Message from "../models/Message.model.js";
+import Group from "../models/group.model.js";
 
 export const getAllMessages = async (req, res) => {
   try {
@@ -19,12 +20,6 @@ export const createMessage = async (req, res) => {
       return res.status(404).json({ error: "Group not found" });
     }
 
-    if (!message.sender || !message.chat || !message.sentAt) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Please provide all fields" });
-    }
-
     const newMessage = new Message({
       sender: senderId,
       group: groupId,
@@ -33,6 +28,7 @@ export const createMessage = async (req, res) => {
       messageType,
     });
 
+    console.log("newMessage", newMessage);
     await newMessage.save();
 
     // Add the message to the group and update lastMessage
@@ -43,7 +39,7 @@ export const createMessage = async (req, res) => {
     res.status(201).json({ success: true, data: newMessage });
   } catch (error) {
     console.error("Error in Create message:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json({ success: false, message: error });
   }
 };
 

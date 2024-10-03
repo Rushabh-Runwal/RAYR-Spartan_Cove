@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Group from "../models/group.model.js";
+import User from "../models/user.model.js";
 
 export const getAllGroups = async (req, res) => {
   try {
@@ -31,16 +32,21 @@ export const getGroup = async (req, res) => {
 };
 
 export const createGroup = async (req, res) => {
-  const group = req.body;
+  const { name, admin, participants } = req.body;
 
-  if (!group.admin || !group.participants || !group.name) {
+  if (!name || !admin || !participants) {
     return res
       .status(400)
       .json({ success: false, message: "Please provide all fields" });
   }
-  const newGroup = new Group(group);
-  const admin = await User.findById(newGroup.admin);
-  if (!admin) {
+  const newGroup = new Group({
+    name,
+    admin,
+    participants,
+  });
+  console.log("newGroup", newGroup);
+  const adminUser = await User.findById(newGroup.admin);
+  if (!adminUser) {
     return res.status(404).json({ error: "Admin not found" });
   }
 
