@@ -11,8 +11,8 @@ const MessageSchema = new mongoose.Schema({
     default: "text",
   },
   sentAt: { type: Date, default: Date.now },
-  deliveredAt: { type: Date, default: null },
-  seenAt: { type: Date, default: null }, // could be removed
+  // deliveredAt: { type: Date, default: null },
+  // seenAt: { type: Date, default: null }, // could be removed
 });
 
 export default mongoose.model("Message", MessageSchema);
