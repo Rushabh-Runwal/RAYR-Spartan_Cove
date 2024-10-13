@@ -16,6 +16,7 @@ export const createMessage = async (req, res) => {
   try {
     const { senderId, groupId, content, attachmentUrl, messageType } = req.body;
     const group = await Group.findById(groupId);
+    console.log("group", group);
     if (!group) {
       return res.status(404).json({ error: "Group not found" });
     }
@@ -28,7 +29,7 @@ export const createMessage = async (req, res) => {
       messageType,
     });
 
-    console.log("newMessage", newMessage);
+    // console.log("newMessage", newMessage);
     await newMessage.save();
 
     // Add the message to the group and update lastMessage
@@ -47,7 +48,7 @@ export const updateMessage = async (req, res) => {
   const { id } = req.params;
 
   const message = req.body;
-  console.log(message);
+  // console.log(message);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ success: false, message: "Invalid user Id" });
   }

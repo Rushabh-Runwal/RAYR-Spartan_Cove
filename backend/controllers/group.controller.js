@@ -5,10 +5,10 @@ import User from "../models/user.model.js";
 export const getAllGroups = async (req, res) => {
   try {
     const groups = await Group.find({});
-    res.status(200).json({ success: true, data: groups });
+    res.status(200).json(groups);
   } catch (error) {
     console.log("error in fetching groups:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(error.message);
   }
 };
 
@@ -44,7 +44,7 @@ export const createGroup = async (req, res) => {
     admin,
     participants,
   });
-  console.log("newGroup", newGroup);
+  // console.log("newGroup", newGroup);
   const adminUser = await User.findById(newGroup.admin);
   if (!adminUser) {
     return res.status(404).json({ error: "Admin not found" });
@@ -59,10 +59,10 @@ export const createGroup = async (req, res) => {
 
   try {
     await newGroup.save();
-    res.status(201).json({ success: true, data: newGroup });
+    res.status(201).json(newGroup);
   } catch (error) {
     console.error("Error in Create group:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json(error.message);
   }
 };
 
@@ -70,16 +70,16 @@ export const updateGroup = async (req, res) => {
   const { id } = req.params;
 
   const group = req.body;
-  console.log(group);
+  // console.log(group);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json({ success: false, message: "Invalid user Id" });
   }
 
   try {
-    const updateGroup = await User.findByIdAndUpdate(id, group, {
+    const updatedGroup = await User.findByIdAndUpdate(id, group, {
       new: true,
     });
-    res.status(200).json({ success: true, data: updateGroup });
+    res.status(200).json(updatedGroup);
   } catch (error) {
     res.status(500).json({ success: false, message: error });
   }
@@ -99,5 +99,51 @@ export const getMessagesInGroup = async (req, res) => {
     res.status(200).json(group.messages);
   } catch (err) {
     res.status(400).json({ error: err.message });
+  }
+};
+
+export const createMessagesInGroup = async (req, res) => {
+  const { senderId, content, attachmentUrl, messageType } = req.body;
+  const groupId = req.params.id;
+  const group = await Group.findById(groupId);
+  console.log("group", group);
+  if (!group) {
+    return res.status(404).json({ error: "Group not found" });
+  }
+  const newMessage = new Message({
+    sender: senderId,
+    group: groupId,
+    content,
+    attachmentUrl,
+    messageType,
+  });
+  console.log("newMessage", newMessage);
+  await newMessage.save();
+
+  group.messages.push(newMessage._id);
+  group.lastMessage = newMessage._id;
+  await group.save();
+  res.status(201).json(newMessage);
+  // console.log("message created successfully");
+};
+
+export const deleteGroup = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const group = await Group.findById(id);
+    if (!group) {
+      return res.status(404).json({ error: "Group not found" });
+    }
+    await Group.findByIdAndDelete(id);
+    res.status(200).json("Group deleted successfully");
+    // Remove the group from each participant's list of groups
+    await Promise.all(
+      group.participants.map(async (userId) => {
+        await User.findByIdAndUpdate(userId, { $pull: { groups: id } });
+      })
+    );
+    console.log("group deleted successfully");
+  } catch (error) {
+    res.status(500).json(error.message);
   }
 };
