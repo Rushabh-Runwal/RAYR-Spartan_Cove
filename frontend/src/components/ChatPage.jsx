@@ -1,6 +1,12 @@
-import * as React from 'react';
-import Button from '@mui/material/Button';
+// src/ChatPage.js
+import React from 'react';
 
-export default function ButtonUsage() {
-  return <Button variant="contained">Chat Page</Button>;
-}
+const ChatPage = () => {
+    return (
+        <div>
+            <h1>Welcome to the Chat Page</h1>
+        </div>
+    );
+};
+
+export default ChatPage;

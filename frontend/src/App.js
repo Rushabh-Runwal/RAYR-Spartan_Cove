@@ -1,6 +1,8 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Signup from "./components/Signup";
-import ChatPage from "./components/ChatPage";
+// src/App.js
+import React from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import Signup from './components/Signup';
+import ChatPage from './components/ChatPage';
 
 const router = createBrowserRouter([
   {
@@ -14,11 +16,11 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return (
-    <>
-      <RouterProvider router={router} />
-    </>
-  );
+    return (
+        <div className="App">
+            <RouterProvider router={router} />
+        </div>
+    );
 }
 
 export default App;
