@@ -1,12 +1,5 @@
 import SvgIcon from '@mui/material/SvgIcon';
-import spartanCoveLogo from '../assets/spartan-cove-logo.svg';
 
-export const SpartanCoveIcon = () => {
-    return (
-      <SvgIcon>
-<img src={spartanCoveLogo} alt="Spartan Cove Logo" />
-      </SvgIcon>
-    )};
 
 
 export const GoogleIcon = () => {

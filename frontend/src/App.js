@@ -1,10 +1,12 @@
 // src/App.js
+
 import React from 'react';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import Signup from './components/Signup';
 import ChatPage from './components/ChatPage';
+
 
 const darkTheme = createTheme({
   palette: {
@@ -19,11 +21,15 @@ const darkTheme = createTheme({
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Signup />,
+    element: <SignUp />,
   },
   {
     path: "/chats",
-    element: <ChatPage />,
+    element: (
+      <ProtectedRoute>
+        <ChatPage />
+      </ProtectedRoute>
+    ),
   },
 ]);
 
