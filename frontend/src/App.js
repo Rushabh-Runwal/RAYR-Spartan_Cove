@@ -1,17 +1,22 @@
 // src/App.js
-import React from "react";
-import {
-  RouterProvider,
-  createBrowserRouter,
-  Navigate,
-} from "react-router-dom";
-import SignUp from "./components/Signup";
-import ChatPage from "./components/ChatPage";
 
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("userInfo") !== null;
-  return isAuthenticated ? children : <Navigate to="/" replace />;
-};
+import React from 'react';
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import Signup from './components/Signup';
+import ChatPage from './components/ChatPage';
+
+
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark',
+    background: {
+      default: '#1a1d21',
+      paper: '#222529',
+    },
+  },
+});
 
 const router = createBrowserRouter([
   {
@@ -29,11 +34,14 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
-  return (
-    <div className="App">
-      <RouterProvider router={router} />
-    </div>
-  );
+    return (
+        <ThemeProvider theme={darkTheme}>
+            <CssBaseline />
+            <div className="App">
+                <RouterProvider router={router} />
+            </div>
+        </ThemeProvider>
+    );
 }
 
 export default App;
