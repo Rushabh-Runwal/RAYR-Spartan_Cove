@@ -1,7 +1,6 @@
 import mongoose from "mongoose";
 import User from "../models/user.model.js";
 import asyncHander from "express-async-handler";
-import generateToken from "../config/generateToken.js";
 
 /**
  * Registers a new user in the system.
@@ -20,7 +19,6 @@ import generateToken from "../config/generateToken.js";
  */
 export const upsertUser = asyncHander(async (req, res) => {
   const user = req.body;
-
   const userObejct = {
     _id: user.uid,
     name: user.name,
@@ -30,21 +28,19 @@ export const upsertUser = asyncHander(async (req, res) => {
     statusMessage:
       "Joined my fellow Spartans at the SpartanCove - let the chats begin!",
   };
-  console.log("userObejct at registerUser in controller", userObejct);
   if (user.email.endsWith("@sjsu.edu")) {
-    try {
-      const user = await User.findByIdAndUpdate(user.uid, userObejct, {
-        new: true,
-        upsert: true,
-      });
-      console.log(
-        "userObejct at registerUser after findByIdAndUpdate in controller",
-        user
-      );
-      res.status(201).json(user);
-    } catch (error) {
-      console.error("Error in Create user:", error.message);
-      res.status(500).json(error.message);
+    const userExists = await User.findOne({ email: user.email });
+    if (userExists) {
+      res.status(200).json(userObejct);
+    } else {
+      const newUser = new User(userObejct);
+      try {
+        await newUser.save();
+        res.status(201).json(userObejct);
+      } catch (error) {
+        console.error("Error in Create user:", error.message);
+        res.status(500).json(error.message);
+      }
     }
   } else {
     res.status(500).json("Only SJSU email addresses are allowed.");

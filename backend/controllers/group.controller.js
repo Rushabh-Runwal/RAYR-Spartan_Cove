@@ -1,8 +1,16 @@
 import mongoose from "mongoose";
 import Group from "../models/group.model.js";
 import User from "../models/user.model.js";
+import asyncHander from "express-async-handler";
 
-export const getAllGroups = async (req, res) => {
+/**
+ * Retrieves all groups from the database and returns them in the response.
+ *
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
+export const getAllGroups = asyncHander(async (req, res) => {
   try {
     const groups = await Group.find({});
     res.status(200).json(groups);
@@ -10,9 +18,16 @@ export const getAllGroups = async (req, res) => {
     console.log("error in fetching groups:", error.message);
     res.status(500).json(error.message);
   }
-};
+});
 
-export const getGroup = async (req, res) => {
+/**
+ * Retrieves a group from the database by its ID, and populates the admin, participants, and messages fields.
+ *
+ * @param {Object} req - The Express request object, containing the group ID in the params.
+ * @param {Object} res - The Express response object, which will contain the group data if found.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
+export const getGroup = asyncHander(async (req, res) => {
   try {
     const group = await Group.findById(req.params.id)
       .populate("admin participants")
@@ -29,9 +44,19 @@ export const getGroup = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-};
+});
 
-export const createGroup = async (req, res) => {
+/**
+ * Creates a new group with the provided name, admin, and participants.
+ *
+ * @param {Object} req - The Express request object, containing the group details in the request body.
+ * @param {string} req.body.name - The name of the new group.
+ * @param {string} req.body.admin - The ID of the user who will be the admin of the new group.
+ * @param {string[]} req.body.participants - An array of user IDs who will be participants in the new group.
+ * @param {Object} res - The Express response object, which will contain the newly created group.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
+export const createGroup = asyncHander(async (req, res) => {
   const { name, admin, participants } = req.body;
 
   if (!name || !admin || !participants) {
@@ -64,9 +89,9 @@ export const createGroup = async (req, res) => {
     console.error("Error in Create group:", error.message);
     res.status(500).json(error.message);
   }
-};
+});
 
-export const updateGroup = async (req, res) => {
+export const updateGroup = asyncHander(async (req, res) => {
   const { id } = req.params;
 
   const group = req.body;
@@ -83,9 +108,9 @@ export const updateGroup = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error });
   }
-};
+});
 
-export const getMessagesInGroup = async (req, res) => {
+export const getMessagesInGroup = asyncHander(async (req, res) => {
   try {
     const group = await Group.findById(req.params.id).populate({
       path: "messages",
@@ -100,9 +125,9 @@ export const getMessagesInGroup = async (req, res) => {
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
-};
+});
 
-export const createMessagesInGroup = async (req, res) => {
+export const createMessagesInGroup = asyncHander(async (req, res) => {
   const { senderId, content, attachmentUrl, messageType } = req.body;
   const groupId = req.params.id;
   const group = await Group.findById(groupId);
@@ -125,9 +150,9 @@ export const createMessagesInGroup = async (req, res) => {
   await group.save();
   res.status(201).json(newMessage);
   // console.log("message created successfully");
-};
+});
 
-export const deleteGroup = async (req, res) => {
+export const deleteGroup = asyncHander(async (req, res) => {
   try {
     const { id } = req.params;
     const group = await Group.findById(id);
@@ -146,4 +171,4 @@ export const deleteGroup = async (req, res) => {
   } catch (error) {
     res.status(500).json(error.message);
   }
-};
+});

@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 import Message from "../models/Message.model.js";
 import Group from "../models/group.model.js";
+import asyncHander from "express-async-handler";
 
-export const getAllMessages = async (req, res) => {
+export const getAllMessages = asyncHander(async (req, res) => {
   try {
     const messages = await Message.find({});
     res.status(200).json({ success: true, data: messages });
@@ -10,9 +11,9 @@ export const getAllMessages = async (req, res) => {
     console.log("error in fetching messages:", error.message);
     res.status(500).json({ success: false, message: "Server Error" });
   }
-};
+});
 
-export const createMessage = async (req, res) => {
+export const createMessage = asyncHander(async (req, res) => {
   try {
     const { senderId, groupId, content, attachmentUrl, messageType } = req.body;
     const group = await Group.findById(groupId);
@@ -42,9 +43,9 @@ export const createMessage = async (req, res) => {
     console.error("Error in Create message:", error.message);
     res.status(500).json({ success: false, message: error });
   }
-};
+});
 
-export const updateMessage = async (req, res) => {
+export const updateMessage = asyncHander(async (req, res) => {
   const { id } = req.params;
 
   const message = req.body;
@@ -61,4 +62,4 @@ export const updateMessage = async (req, res) => {
   } catch (error) {
     res.status(500).json({ success: false, message: error });
   }
-};
+});

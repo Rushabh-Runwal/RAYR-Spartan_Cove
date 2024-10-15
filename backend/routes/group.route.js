@@ -1,5 +1,5 @@
 import express from "express";
-
+import protect from "../middleware/auth.js";
 import {
   getAllGroups,
   getGroup,
@@ -12,18 +12,18 @@ import {
 
 const router = express.Router();
 
-router.route("/").get(getAllGroups).post(createGroup);
+router.route("/").get(protect, getAllGroups).post(protect, createGroup);
 
 router
   .route("/:id")
-  .get(getGroup)
-  .post(updateGroup)
-  .put(updateGroup)
-  .delete(deleteGroup);
+  .get(protect, getGroup)
+  .post(protect, updateGroup)
+  .put(protect, updateGroup)
+  .delete(protect, deleteGroup);
 
 router
   .route("/:id/messages")
-  .get(getMessagesInGroup)
-  .post(createMessagesInGroup);
+  .get(protect, getMessagesInGroup)
+  .post(protect, createMessagesInGroup);
 
 export default router;
