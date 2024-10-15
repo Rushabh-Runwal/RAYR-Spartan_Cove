@@ -7,13 +7,13 @@ import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { GoogleIcon } from '../assets/CustomIcons';
 import spartanCoveLogo from '../assets/spartan-cove-logo.png';
-import  auth  from '../firebaseconfig'; 
-import { useNavigate } from 'react-router-dom'; // For navigation
-import {GoogleAuthProvider, signInWithPopup} from 'firebase/auth';
+import auth from '../firebaseconfig'; 
+import { useNavigate } from 'react-router-dom';
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 
-
+// Styled components
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
@@ -27,10 +27,10 @@ const Card = styled(MuiCard)(({ theme }) => ({
   },
   boxShadow:
     'hsla(220, 30%, 5%, 0.05) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.05) 0px 15px 35px -5px',
-  ...theme.applyStyles('dark', {
-    boxShadow:
-      'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
-  }),
+    ...theme.applyStyles('dark', {
+        boxShadow:
+          'hsla(220, 30%, 5%, 0.5) 0px 5px 15px 0px, hsla(220, 25%, 10%, 0.08) 0px 15px 35px -5px',
+    }),
 }));
 
 const SignInContainer = styled(Stack)(({ theme }) => ({
@@ -49,15 +49,21 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
       'radial-gradient(ellipse at 50% 50%, hsl(210, 100%, 97%), hsl(0, 0%, 100%))',
     backgroundRepeat: 'no-repeat',
     ...theme.applyStyles('dark', {
-      backgroundImage:
-        'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
-    }),
+        backgroundImage:
+          'radial-gradient(at 50% 50%, hsla(210, 100%, 16%, 0.5), hsl(220, 30%, 5%))',
+      }),
   },
 }));
 
+// Helper function to detect mobile devices or Safari browser
+const isMobileOrSafari = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  return /iPhone|iPad|iPod|Android/i.test(userAgent) || (userAgent.includes('Safari') && !userAgent.includes('Chrome'));
+};
+
 const registerUser = async (userObj) => {
   const backend_url = "http://localhost:5002";
-  const user = userObj.providerData[0]
+  const user = userObj.providerData[0];
   try {
     const config = {
       headers: {
@@ -75,7 +81,6 @@ const registerUser = async (userObj) => {
       config
     );
     data["token"] = userObj.stsTokenManager.accessToken;
-
     /* what do we have? */
     // data = {
     //   "_id": "tZfrvuWu9DflMujV2d5XKErGzdB3",
@@ -86,17 +91,17 @@ const registerUser = async (userObj) => {
     //   "statusMessage": "Joined my fellow Spartans at the SpartanCove - let the chats begin!",
     //   "token": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjhkOWJlZmQzZWZmY2JiYzgyYzgzYWQwYzk3MmM4ZWE5NzhmNmYxMzciLCJ0eXAiOiJKV1QifQ.eyJuYW1lIjoiUnVzaGFiaCBHYXV0YW0gUnVud2FsIiwicGljdHVyZSI6Imh0dHBzOi8vbGgzLmdvb2dsZXVzZXJjb250ZW50LmNvbS9hL0FDZzhvY0o1OGVqRkQwZ05rWkd6ckhuLUxaVmtwV0ZyY1BEWkxqZnpJTkFTUlc3aldFS1RnQT1zOTYtYyIsImlzcyI6Imh0dHBzOi8vc2VjdXJldG9rZW4uZ29vZ2xlLmNvbS9jaGF0LWFwcC0yMjE2ZCIsImF1ZCI6ImNoYXQtYXBwLTIyMTZkIiwiYXV0aF90aW1lIjoxNzI4ODYzNTI4LCJ1c2VyX2lkIjoidFpmcnZ1V3U5RGZsTXVqVjJkNVhLRXJHemRCMyIsInN1YiI6InRaZnJ2dVd1OURmbE11alYyZDVYS0VyR3pkQjMiLCJpYXQiOjE3Mjg4NjM1MjgsImV4cCI6MTcyODg2NzEyOCwiZW1haWwiOiJydXNoYWJoZ2F1dGFtLnJ1bndhbEBzanN1LmVkdSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7Imdvb2dsZS5jb20iOlsiMTE3NjIzMDc0NzQ5NTQzOTE2NzAzIl0sImVtYWlsIjpbInJ1c2hhYmhnYXV0YW0ucnVud2FsQHNqc3UuZWR1Il19LCJzaWduX2luX3Byb3ZpZGVyIjoiZ29vZ2xlLmNvbSJ9fQ.OlkdWUTtXhSyABc20H4dwSIA1a2Npz-IVchWoNI63gacRTvc9OT4P6PDnAcF8COREPLgbp5eOzEyjTsn5I8OblrAWZKasKJLSY1I8BaupGtP8PZgYuh7SOYzfeMUjiciTV50cIsDVdczMPpQW9fEF_2iKBF6vlRR3VbR0laCpoAeL3elzkXux2PIc-14oh3YTVwwglcJop872ed6kpsUVlzm32Dka8oyLJum-Qr-1pQrhQfm_ENuFjDhOGgDnNKe10o6zajCOX3GsXIWeVxeGkhfY0EpsIU_r-xjvxKrmNRvmq6i8Omueqv6rmcB7R7NBSGrXVMJy7YV0xZXQ4WPew"
     // }
-
     localStorage.setItem("userInfo", JSON.stringify(data));
-    return {"success":true, "data": data};
+    return { success: true, data };
   } catch (error) {
-    return {"success":false, "error": error.message};
+    return { success: false, error: error.message };
   }
-}
+};
 
 export default function SignUp(props) {
   const [errorMessage, setErrorMessage] = React.useState(''); // State to manage error messages
   const navigate = useNavigate(); // useNavigate hook to redirect
+
   
   /* For testing purposes */  
     // const sampleUserObj = {
@@ -150,60 +155,87 @@ export default function SignUp(props) {
     //     "sign_in_provider": "google.com"
     //   }
     // }
-
-    const googleSignIn = () => {
-      /* For testing purposes */  
+    // Handle Google sign-in
+  const googleSignIn = () => {
+    /* For testing purposes */  
       // registerUser(sampleUserObj).then((isUserValid) => {
       //   console.log(isUserValid);
       //   if (isUserValid.success) {
       //       navigate('/chats');
       //   }
       // });
-
-        const provider = new GoogleAuthProvider();
-        signInWithPopup(auth, provider)
-            .then((result) => {
-                // Check if the email ends with '@sjsu.edu'
-                const email = result.user.email;
-                if (email.endsWith('@sjsu.edu')) {
-                  registerUser(result.user).then((isUserValid) => {
-                    if (isUserValid.success) {
-                        navigate('/chats');
-                    }
-                });
-                } else {
-                  setErrorMessage('Only SJSU members are allowed to sign in.');
-                  console.error('Invalid email domain:', email);
-                  auth.signOut();
-                }
-            })
-            .catch((error) => {
-                console.error('Google sign-in error:', error);
+    const provider = new GoogleAuthProvider();
+    
+    if (isMobileOrSafari()) {
+      // Use redirect for mobile or Safari
+      signInWithRedirect(auth, provider);
+    } else {
+      // Use popup for desktop (Chrome, etc.)
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          const email = result.user.email;
+          if (email.endsWith('@sjsu.edu')) {
+            registerUser(result.user).then((isUserValid) => {
+              if (isUserValid.success) {
+                navigate('/chats');
+              }
             });
-    };
+          } else {
+            setErrorMessage('Only SJSU members are allowed to sign in.');
+            auth.signOut();
+          }
+        })
+        .catch((error) => {
+          setErrorMessage('Google sign-in failed.');
+          console.error('Google sign-in error:', error);
+        });
+    }
+  };
+
+  // Handle the redirect after sign-in on mobile or Safari
+  React.useEffect(() => {
+    getRedirectResult(auth)
+      .then((result) => {
+        if (result) {
+          const email = result.user.email;
+          if (email.endsWith('@sjsu.edu')) {
+            registerUser(result.user).then((isUserValid) => {
+              if (isUserValid.success) {
+                navigate('/chats');
+              }
+            });
+          } else {
+            setErrorMessage('Only SJSU members are allowed to sign in.');
+            auth.signOut();
+          }
+        }
+      })
+      .catch((error) => {
+        if (error) {
+          setErrorMessage('Google sign-in failed.');
+          console.error('Google sign-in redirect error:', error);
+        }
+      });
+  }, [navigate]);
 
   return (
     <>
       <CssBaseline enableColorScheme />
       <SignInContainer 
-      //set container in center of the page
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        width: '100vw',
-      }}
-
-      direction="column" justifyContent="space-between">
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          width: '100vw',
+        }}
+        direction="column"
+        justifyContent="space-between"
+      >
         <Card variant="outlined">
-          {/* spartan cove logo */}
           <Box
             component="img"
-            sx={{
-            height: '100%',
-            width: 'auto'
-            }}
+            sx={{ height: '100%', width: 'auto' }}
             alt="Spartan Cove Logo"
             src={spartanCoveLogo}
           />
@@ -214,18 +246,20 @@ export default function SignUp(props) {
               onClick={googleSignIn}
               startIcon={<GoogleIcon />}
             >
-              Sign in with SJSU mail Id
+              Sign in with SJSU mail ID
             </Button>
           </Box>
         </Card>
-        {errorMessage && 
-        <Alert 
-        onClose={() => {setErrorMessage("")}} 
-        variant="filled" 
-        severity="error"> 
-        {errorMessage}
-        </Alert>}
+        {errorMessage && (
+          <Alert
+            onClose={() => { setErrorMessage(''); }}
+            variant="filled"
+            severity="error"
+          >
+            {errorMessage}
+          </Alert>
+        )}
       </SignInContainer>
-      </>
+    </>
   );
 }
