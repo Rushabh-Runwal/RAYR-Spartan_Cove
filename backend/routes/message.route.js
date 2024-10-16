@@ -1,5 +1,5 @@
 import express from "express";
-
+import protect from "../middleware/auth.js";
 import {
   createMessage,
   getAllMessages,
@@ -8,9 +8,8 @@ import {
 
 const router = express.Router();
 
-router.get("/", getAllMessages);
-router.post("/", createMessage);
-router.put("/:id", updateMessage);
+router.route("/").get(protect, getAllMessages).post(protect, createMessage);
+router.route("/:id").put(protect, updateMessage);
 // router.delete("/:id", deleteMessage);
 
 export default router;
