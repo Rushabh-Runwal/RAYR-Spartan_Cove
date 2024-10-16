@@ -9,7 +9,7 @@ import { GoogleIcon } from '../assets/CustomIcons';
 import spartanCoveLogo from '../assets/spartan-cove-logo.png';
 import auth from '../firebaseconfig'; 
 import { useNavigate } from 'react-router-dom';
-import { GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 
@@ -55,11 +55,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
   },
 }));
 
-// Helper function to detect mobile devices or Safari browser
-const isMobileOrSafari = () => {
-  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-  return /iPhone|iPad|iPod|Android/i.test(userAgent) || (userAgent.includes('Safari') && !userAgent.includes('Chrome'));
-};
 
 const registerUser = async (userObj) => {
   const backend_url = "http://localhost:5002";
@@ -166,11 +161,6 @@ export default function SignUp(props) {
       // });
     const provider = new GoogleAuthProvider();
     
-    if (isMobileOrSafari()) {
-      // Use redirect for mobile or Safari
-      signInWithRedirect(auth, provider);
-    } else {
-      // Use popup for desktop (Chrome, etc.)
       signInWithPopup(auth, provider)
         .then((result) => {
           const email = result.user.email;
@@ -189,34 +179,8 @@ export default function SignUp(props) {
           setErrorMessage('Google sign-in failed.');
           console.error('Google sign-in error:', error);
         });
-    }
   };
 
-  // Handle the redirect after sign-in on mobile or Safari
-  React.useEffect(() => {
-    getRedirectResult(auth)
-      .then((result) => {
-        if (result) {
-          const email = result.user.email;
-          if (email.endsWith('@sjsu.edu')) {
-            registerUser(result.user).then((isUserValid) => {
-              if (isUserValid.success) {
-                navigate('/chats');
-              }
-            });
-          } else {
-            setErrorMessage('Only SJSU members are allowed to sign in.');
-            auth.signOut();
-          }
-        }
-      })
-      .catch((error) => {
-        if (error) {
-          setErrorMessage('Google sign-in failed.');
-          console.error('Google sign-in redirect error:', error);
-        }
-      });
-  }, [navigate]);
 
   return (
     <>
