@@ -1,8 +1,11 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Box, Typography } from '@mui/material';
+import axios from 'axios';
+import { useChatState } from '../../context/chatProvider';
 
 const Message = ({ message }) => {
-  const isUser = message.sender === 'user';
+  const { user } = useChatState();
+  const isUser = message.sender === user._id; //TODO: Compare the user with the sender of the message
 
   return (
     <Box
