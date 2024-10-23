@@ -17,7 +17,7 @@ export const createMessage = asyncHander(async (req, res) => {
   try {
     const { senderId, groupId, content, attachmentUrl, messageType } = req.body;
     const group = await Group.findById(groupId);
-    console.log("group", group);
+    // console.log("group", group);
     if (!group) {
       return res.status(404).json({ error: "Group not found" });
     }

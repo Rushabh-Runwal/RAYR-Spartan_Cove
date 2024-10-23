@@ -92,7 +92,6 @@ export const getUser = asyncHander(async (req, res) => {
  */
 export const deleteUser = asyncHander(async (req, res) => {
   const { id } = req.params;
-  console.log("id:" + id);
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).json("Invalid User Id");
   }

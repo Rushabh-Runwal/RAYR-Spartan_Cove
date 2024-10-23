@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Box, styled } from '@mui/material';
 import Sidebar from './Sidebar/Sidebar';
 import ChatArea from './ChatArea/ChatArea';
+import { useChatState } from '../context/chatProvider';
 
 const PageContainer = styled(Box)({
   display: 'flex',
@@ -11,32 +11,18 @@ const PageContainer = styled(Box)({
 });
 
 const ChatPage = () => {
-    const [groups, setGroups] = useState([]);
+  const {user} = useChatState();
 
-    const fetchChats = async () => {
-        const user = JSON.parse(localStorage.getItem("userInfo"));
-        const backend_url = "http://localhost:5002";
-        const config = {
-            headers: {
-              Authorization: `Bearer ${user.token}`,
-            },
-          };
-        const { data } = await axios.get(`${backend_url}/group`, config);
-        console.log(data);
-        setGroups(data);
-    }
-
-    useEffect(() => {
-        fetchChats();
-        console.log('i fire once'); // this is firing twice due to react strict mode
-    }, []);
-    
-    return (
-        <PageContainer>
-            <Sidebar groups={groups} />
-            <ChatArea />
-        </PageContainer>
-    );
+  useEffect(() => {
+      console.log('Triggered useEffect from chatPage'); // this is firing twice due to react strict mode
+  }, []);
+  
+  return (
+      <PageContainer>
+          <Sidebar />
+          <ChatArea />
+      </PageContainer>
+  );
 }
 
 export default ChatPage;

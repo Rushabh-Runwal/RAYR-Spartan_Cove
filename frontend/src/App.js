@@ -25,10 +25,19 @@ const ProtectedRoute = ({ children }) => {
   return isAuthenticated ? children : <Navigate to="/" replace />;
 };
 
+const SignedInRoute = ({ children }) => {
+  const isAuthenticated = localStorage.getItem("userInfo") !== null;
+  return isAuthenticated ? <Navigate to="/chats" replace /> : children;
+};
+
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Signup />,
+    element: (
+      <SignedInRoute>
+        <Signup />
+      </SignedInRoute>
+    ),
   },
   {
     path: "/chats",

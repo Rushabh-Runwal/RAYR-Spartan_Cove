@@ -12,7 +12,12 @@ import asyncHander from "express-async-handler";
  */
 export const getAllGroups = asyncHander(async (req, res) => {
   try {
-    const groups = await Group.find({});
+    const group_ids = req.user?.groups;
+    const groups = await Group.find({ _id: { $in: group_ids } })
+      .populate("participants")
+      .populate("lastMessage")
+      .sort({ updatedAt: -1 });
+    // const groups = await Group.find({});
     res.status(200).json(groups);
   } catch (error) {
     console.log("error in fetching groups:", error.message);
@@ -131,7 +136,7 @@ export const createMessagesInGroup = asyncHander(async (req, res) => {
   const { senderId, content, attachmentUrl, messageType } = req.body;
   const groupId = req.params.id;
   const group = await Group.findById(groupId);
-  console.log("group", group);
+  // console.log("group", group);
   if (!group) {
     return res.status(404).json({ error: "Group not found" });
   }
@@ -142,7 +147,7 @@ export const createMessagesInGroup = asyncHander(async (req, res) => {
     attachmentUrl,
     messageType,
   });
-  console.log("newMessage", newMessage);
+  // console.log("newMessage", newMessage);
   await newMessage.save();
 
   group.messages.push(newMessage._id);
