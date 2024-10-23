@@ -1,18 +1,38 @@
-import React from 'react';
-import { List } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import {Box, List } from '@mui/material';
 import ConversationItem from './ConversationItem';
-
+import axios from 'axios';
+import { useChatState } from '../../context/chatProvider';
 const ConversationList = () => {
-  const conversations = [
-    { id: 1, name: 'Phil', lastMessage: 'Happy Birthday Claire!!', time: '9:56 PM' },
-    { id: 2, name: 'Jay Prichet', lastMessage: 'I fucking hate phil', time: '9:52 PM' },
-    // Add more conversations as needed
-  ];
+
+  const { selectedChat, setSelectedChat, user, groups, setGroups } = useChatState();
+  const fetchChats = async () => {
+      const user = JSON.parse(localStorage.getItem("userInfo"));
+      const backend_url = "http://localhost:5002";
+      const config = {
+          headers: {
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+      const { data } = await axios.get(`${backend_url}/group`, config);
+      console.log("data", data);
+      setGroups(data);
+  }
+  useEffect(() => {
+      fetchChats();
+  }, []);
+
 
   return (
     <List sx={{ overflow: 'auto', flexGrow: 1 }}>
-      {conversations.map((conv) => (
-        <ConversationItem key={conv.id} conversation={conv} />
+      {groups.map((conv) => (
+        <Box         
+        onClick={() => setSelectedChat(conv)}
+        cursor="pointer"
+        color={selectedChat === conv ? "cyan" : "inherit"}
+        borderRadius="lg" >
+          <ConversationItem key={conv.id} conversation={conv} />
+        </Box>
       ))}
     </List>
   );

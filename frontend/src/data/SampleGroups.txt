@@ -1,0 +1,71 @@
+{
+  "name": "Rushabh and Test User 0",
+  "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",  
+  "participants": [
+    "tZfrvuWu9DflMujV2d5XKErGzdB3",        
+    "0000000000000000000000000000"   
+  ]
+}
+{
+    "name": "Rushabh and Test User 1",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "11111111111111111111111111111"
+    ]
+}
+{
+    "name": "Rushabh and Test User 2",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "2222222222222222222222222222"
+    ]
+}
+{
+    "name": "Rushabh and Test User 3",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "3333333333333333333333333333"
+    ]
+}
+{
+    "name": "Rushabh and Test User 4 and Test User 5",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "4444444444444444444444444444",
+        "5555555555555555555555555555"
+    ]
+}
+{
+    "name": "Rushabh and Test User 0 and Test User 1",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "0000000000000000000000000000",
+        "11111111111111111111111111111"
+    ]
+}
+{
+    "name": "Rushabh and Test User 0 and Test User 1 and Test User 2",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "0000000000000000000000000000",
+        "11111111111111111111111111111",
+        "2222222222222222222222222222"
+    ]
+}
+{
+    "name": "Rushabh and Test User 0 and Test User 1 and Test User 3 and Test User 4",
+    "admin": "tZfrvuWu9DflMujV2d5XKErGzdB3",
+    "participants": [
+        "tZfrvuWu9DflMujV2d5XKErGzdB3",
+        "0000000000000000000000000000",
+        "11111111111111111111111111111",
+        "3333333333333333333333333333",
+        "4444444444444444444444444444"
+    ]
+}

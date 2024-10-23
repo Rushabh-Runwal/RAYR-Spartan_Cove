@@ -13,7 +13,7 @@ const protect = asyncHandler(async (req, res, next) => {
       //decodes token id
       const decoded = jwt.decode(token);
       req.user = await User.findById(decoded.user_id);
-      console.log("req.user", req.user); // getting user from token
+      // console.log("req.user", req.user); // getting user from token
       if (req.user) {
         next();
       } else {
