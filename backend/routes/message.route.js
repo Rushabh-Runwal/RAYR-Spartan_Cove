@@ -8,8 +8,8 @@ import {
 
 const router = express.Router();
 
-router.route("/").get(protect, getAllMessages).post(protect, createMessage);
-router.route("/:id").put(protect, updateMessage);
+router.route("/").post(protect, createMessage);
+router.route("/:id").get(protect, getAllMessages).put(protect, updateMessage);
 // router.delete("/:id", deleteMessage);
 
 export default router;
