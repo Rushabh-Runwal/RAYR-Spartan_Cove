@@ -4,13 +4,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...SpartanCove'
-                sh 'make build'  // Adjust this command for your project’s build process
+                sh 'npm run clean'
+                sh 'npm run build'  // Adjust this command for your project’s build process
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...SpartanCove'
-                sh 'make test'  // Adjust this for your project’s test process
+                sh 'npm test'  // Adjust this for your project’s test process
             }
         }
     }
