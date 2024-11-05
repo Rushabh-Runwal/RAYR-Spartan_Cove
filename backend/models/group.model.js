@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 const GroupSchema = new mongoose.Schema(
   {
-    name: String,
+    name: { type: String, trim: true },
     admin: { type: String, ref: "User" },
     isGroupChat: { type: Boolean, default: true },
     participants: [{ type: String, ref: "User", default: [] }],

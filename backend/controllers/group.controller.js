@@ -33,6 +33,7 @@ export const getAllGroups = asyncHander(async (req, res) => {
  * @returns {Promise<void>} - A Promise that resolves when the response is sent.
  */
 export const getGroup = asyncHander(async (req, res) => {
+  //TODO: add ability to get or create single person's chat
   try {
     const group = await Group.findById(req.params.id)
       .populate("admin participants")
@@ -69,18 +70,17 @@ export const createGroup = asyncHander(async (req, res) => {
       .status(400)
       .json({ success: false, message: "Please provide all fields" });
   }
+  console.log(req.body);
   const newGroup = new Group({
     name,
     admin,
     participants,
   });
-  // console.log("newGroup", newGroup);
   const adminUser = await User.findById(newGroup.admin);
   if (!adminUser) {
     return res.status(404).json({ error: "Admin not found" });
   }
 
-  // Add the group to each participant's list of groups
   await Promise.all(
     participants.map(async (userId) => {
       await User.findByIdAndUpdate(userId, { $push: { groups: newGroup._id } });
@@ -89,6 +89,9 @@ export const createGroup = asyncHander(async (req, res) => {
 
   try {
     await newGroup.save();
+    newGroup = await Group.findOne({ _id: newGroup._id })
+      .populate("participants")
+      .populate("admin");
     res.status(201).json(newGroup);
   } catch (error) {
     console.error("Error in Create group:", error.message);
@@ -96,6 +99,15 @@ export const createGroup = asyncHander(async (req, res) => {
   }
 });
 
+/**
+ * Updates an existing group with the provided details.
+ *
+ * @param {Object} req - The Express request object, containing the group details in the request body.
+ * @param {string} req.params.id - The ID of the group to be updated.
+ * @param {Object} req.body - The updated group details.
+ * @param {Object} res - The Express response object, which will contain the updated group.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
 export const updateGroup = asyncHander(async (req, res) => {
   const { id } = req.params;
 
@@ -115,6 +127,14 @@ export const updateGroup = asyncHander(async (req, res) => {
   }
 });
 
+/**
+ * Retrieves the messages in a specific group.
+ *
+ * @param {Object} req - The Express request object, containing the group ID in the request parameters.
+ * @param {string} req.params.id - The ID of the group to retrieve messages for.
+ * @param {Object} res - The Express response object, which will contain the messages for the specified group.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
 export const getMessagesInGroup = asyncHander(async (req, res) => {
   try {
     const group = await Group.findById(req.params.id).populate({
@@ -132,6 +152,18 @@ export const getMessagesInGroup = asyncHander(async (req, res) => {
   }
 });
 
+/**
+ * Creates a new message in a specific group.
+ *
+ * @param {Object} req - The Express request object, containing the message details in the request body.
+ * @param {string} req.params.id - The ID of the group to create the message in.
+ * @param {string} req.body.senderId - The ID of the user sending the message.
+ * @param {string} req.body.content - The content of the message.
+ * @param {string} req.body.attachmentUrl - The URL of any attachment for the message.
+ * @param {string} req.body.messageType - The type of the message (e.g. text, image, file).
+ * @param {Object} res - The Express response object, which will contain the newly created message.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
 export const createMessagesInGroup = asyncHander(async (req, res) => {
   const { senderId, content, attachmentUrl, messageType } = req.body;
   const groupId = req.params.id;
@@ -157,6 +189,14 @@ export const createMessagesInGroup = asyncHander(async (req, res) => {
   // console.log("message created successfully");
 });
 
+/**
+ * Deletes a group and removes it from the participants' list of groups.
+ *
+ * @param {Object} req - The Express request object, containing the ID of the group to delete in the request parameters.
+ * @param {string} req.params.id - The ID of the group to delete.
+ * @param {Object} res - The Express response object, which will contain a success message if the group was deleted successfully.
+ * @returns {Promise<void>} - A Promise that resolves when the response is sent.
+ */
 export const deleteGroup = asyncHander(async (req, res) => {
   try {
     const { id } = req.params;
