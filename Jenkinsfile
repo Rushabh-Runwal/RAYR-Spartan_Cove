@@ -11,7 +11,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing...SpartanCove'
-                sh 'CI=false npm test'  // Adjust this for your project’s test process
+                sh 'npm test'  // Adjust this for your project’s test process
             }
         }
     }
