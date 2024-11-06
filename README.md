@@ -77,6 +77,8 @@ JWT_SECRET=your_jwt_secret
 PORT=5000
 ```
 
+## Project Structure
+```
 sjsu-chat-app/
 ├── frontend/
 │   ├── src/
@@ -88,3 +90,7 @@ sjsu-chat-app/
     ├── routes/
     ├── config/
     └── package.json
+└── .env
+└── README.md
+└── .gitignore
+```
