@@ -4,14 +4,14 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building...SpartanCove'
-                sh 'npm run clean'
-                sh 'npm run build'  // Adjust this command for your project’s build process
+                sh 'CI=false npm run clean'
+                sh 'CI=false npm run build'  // Adjust this command for your project’s build process
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing...SpartanCove'
-                sh 'npm test'  // Adjust this for your project’s test process
+                sh 'CI=false npm test'  // Adjust this for your project’s test process
             }
         }
     }
