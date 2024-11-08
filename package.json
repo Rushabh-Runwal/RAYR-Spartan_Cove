@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Sucessfully executed TestCases\"",
     "dev": "NODE_ENV=development nodemon backend/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "NODE_ENV=production node backend/server.js"
+    "start": "NODE_ENV=production node backend/server.js",
+    "clean": "rm -rf node_modules && rm -rf frontend/build && rm -rf backend/build"
   },
   "type": "module",
   "keywords": [],

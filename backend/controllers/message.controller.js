@@ -3,16 +3,45 @@ import Message from "../models/Message.model.js";
 import Group from "../models/group.model.js";
 import asyncHander from "express-async-handler";
 
+/**
+ * Retrieves all messages from the database.
+ *
+ * @async
+ * @function getAllMessages
+ * @param {Object} req - The Express request object.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<Object>} - A JSON response containing all messages, or an error message if there was a problem.
+ */
 export const getAllMessages = asyncHander(async (req, res) => {
   try {
-    const messages = await Message.find({});
-    res.status(200).json({ success: true, data: messages });
+    const groupId = req.params.id;
+    const message_ids = await Group.findById(groupId).select("messages");
+    const messages = await Message.find({ _id: { $in: message_ids } }).populate(
+      "sender",
+      "name email"
+    );
+    res.status(200).json(messages);
   } catch (error) {
     console.log("error in fetching messages:", error.message);
-    res.status(500).json({ success: false, message: "Server Error" });
+    res.status(500).json("error in fetching messages:", error.message);
   }
 });
 
+/**
+ * Creates a new message in a group.
+ *
+ * @async
+ * @function createMessage
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.body - The request body containing message details.
+ * @param {string} req.body.senderId - The ID of the user sending the message.
+ * @param {string} req.body.groupId - The ID of the group the message belongs to.
+ * @param {string} req.body.content - The content of the message.
+ * @param {string} req.body.attachmentUrl - The URL of any attachment associated with the message.
+ * @param {string} req.body.messageType - The type of the message (e.g. text, image, etc.).
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<Object>} - A JSON response containing the newly created message, or an error message if there was a problem.
+ */
 export const createMessage = asyncHander(async (req, res) => {
   try {
     const { senderId, groupId, content, attachmentUrl, messageType } = req.body;
@@ -38,13 +67,25 @@ export const createMessage = asyncHander(async (req, res) => {
     group.lastMessage = newMessage._id;
 
     await group.save();
-    res.status(201).json({ success: true, data: newMessage });
+    res.status(201).json(newMessage);
   } catch (error) {
     console.error("Error in Create message:", error.message);
-    res.status(500).json({ success: false, message: error });
+    res.status(500).json("Error in Create message:", error.message);
   }
 });
 
+/**
+ * Updates an existing message in the database.
+ *
+ * @async
+ * @function updateMessage
+ * @param {Object} req - The Express request object.
+ * @param {Object} req.params - The request parameters.
+ * @param {string} req.params.id - The ID of the message to update.
+ * @param {Object} req.body - The request body containing the updated message details.
+ * @param {Object} res - The Express response object.
+ * @returns {Promise<Object>} - A JSON response containing the updated message, or an error message if there was a problem.
+ */
 export const updateMessage = asyncHander(async (req, res) => {
   const { id } = req.params;
 

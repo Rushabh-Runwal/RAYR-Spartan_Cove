@@ -3,7 +3,7 @@ import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography } from '@mui
 
 const ConversationItem = ({ conversation }) => {
   return (
-    <ListItem alignItems="flex-start">
+    <ListItem key={conversation._id} alignItems="flex-start">
       <ListItemAvatar>
         <Avatar alt={conversation.name} src="/static/images/avatar/1.jpg" />
       </ListItemAvatar>
