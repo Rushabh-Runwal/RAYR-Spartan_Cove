@@ -71,7 +71,7 @@ export const createGroup = asyncHander(async (req, res) => {
       .json({ success: false, message: "Please provide all fields" });
   }
   console.log(req.body);
-  const newGroup = new Group({
+  let newGroup = new Group({
     name,
     admin,
     participants,
