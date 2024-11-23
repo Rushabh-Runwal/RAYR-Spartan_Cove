@@ -14,9 +14,8 @@ const MessageList = () => {
         Authorization: `Bearer ${user.token}`,
       },
     };
-    //TODO: The backend route for fetching messaged needs to be updated currently it gets all the messages
-    // we need to get messages based on group id that would be the best in MOP
-    //const response = await axios.get('${backend_url}/messages/${selectedChat._id}', config);
+  
+    const response = await axios.get('${backend_url}/messages', config);
     return response.data;
   }
 
