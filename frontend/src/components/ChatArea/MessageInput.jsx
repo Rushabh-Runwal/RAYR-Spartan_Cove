@@ -12,7 +12,7 @@ const MessageInput = () => {
     setMessage(event.target.value);
   };
   const sendMessage = async () => {
-    const backend_url = "http://localhost:5002"; //TODO: Shouldn't be accessing the URL like this use a config file
+    const backend_url = "http://localhost:5002"; 
     if (message.trim() && selectedChat) {
       try {
         const config = {
