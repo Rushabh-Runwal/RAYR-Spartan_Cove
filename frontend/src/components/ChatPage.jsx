@@ -12,15 +12,16 @@ const PageContainer = styled(Box)({
 
 const ChatPage = () => {
   const {user} = useChatState();
+  const [reloadChats, setReloadChats] = useState(false);
 
   useEffect(() => {
       console.log('Triggered useEffect from chatPage'); // this is firing twice due to react strict mode
   }, []);
-  
+
   return (
       <PageContainer>
-          <Sidebar />
-          <ChatArea />
+          {user && <Sidebar reloadChats={reloadChats} setReloadChats={setReloadChats} />}
+          {user && <ChatArea reloadChats={reloadChats} setReloadChats={setReloadChats} />}
       </PageContainer>
   );
 }
