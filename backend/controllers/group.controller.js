@@ -33,7 +33,6 @@ export const getAllGroups = asyncHander(async (req, res) => {
  * @returns {Promise<void>} - A Promise that resolves when the response is sent.
  */
 export const getGroup = asyncHander(async (req, res) => {
-  //TODO: add ability to get or create single person's chat
   try {
     const group = await Group.findById(req.params.id)
       .populate("admin participants")
@@ -65,17 +64,30 @@ export const getGroup = asyncHander(async (req, res) => {
 export const createGroup = asyncHander(async (req, res) => {
   const { name, admin, participants } = req.body;
 
+  //TODO: add ability to get or create single person's chat
+  // Search in the avilable group for grp members
+
   if (!name || !admin || !participants) {
     return res
       .status(400)
       .json({ success: false, message: "Please provide all fields" });
   }
-  console.log(req.body);
+  // Check if the there is already a group with same members
+  // participants length equal to two
+  if (participants.length === 2) {
+    const existingGroup = await Group.findOne({
+      participants: { $all: participants },
+    });
+    if (existingGroup) {
+      return res.status(200).json({ success: true, group: existingGroup });
+    }
+  }
   let newGroup = new Group({
     name,
     admin,
     participants,
   });
+
   const adminUser = await User.findById(newGroup.admin);
   if (!adminUser) {
     return res.status(404).json({ error: "Admin not found" });

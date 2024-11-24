@@ -17,7 +17,6 @@ const SidebarHeader = () => {
   const handleClickOpen = () => {
     setOpen(true);
   };
-
   const handleClose = () => {
     setOpen(false);
   };

@@ -3,7 +3,7 @@ import { Box, InputBase, IconButton } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import AttachFileIcon from '@mui/icons-material/AttachFile';
 
-const MessageInput = () => {
+const MessageInput = ({selectedChat}) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', p: 2, borderTop: 1, borderColor: 'divider' }}>
       <IconButton>

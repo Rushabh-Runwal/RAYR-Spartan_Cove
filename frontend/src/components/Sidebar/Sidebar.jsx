@@ -14,12 +14,12 @@ const SidebarContainer = styled(Box)(({ theme }) => ({
   borderRight: `1px solid ${theme.palette.divider}`,
 }));
 
-const Sidebar = () => {
+const Sidebar = ({ reloadChats, setReloadChats }) => {
   return (
     <SidebarContainer>
-      <SidebarHeader />
+      <SidebarHeader reloadChats={reloadChats} setReloadChats={setReloadChats} />
       <SearchBar />
-      <ConversationList />
+      <ConversationList reloadChats={reloadChats} setReloadChats={setReloadChats} />
       <SidebarFooter />
     </SidebarContainer>
   );
