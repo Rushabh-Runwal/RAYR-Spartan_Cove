@@ -17,7 +17,18 @@ export const getAllGroups = asyncHander(async (req, res) => {
       .populate("participants")
       .populate("lastMessage")
       .sort({ updatedAt: -1 });
-    // const groups = await Group.find({});
+
+    groups.forEach((group) => {
+      if (group.participants.length === 2) {
+        const otherParticipant = group.participants.find(
+          (p) => p._id.toString() !== req.user._id.toString()
+        );
+        if (otherParticipant) {
+          group.name = otherParticipant.name;
+        }
+      }
+    });
+
     res.status(200).json(groups);
   } catch (error) {
     console.log("error in fetching groups:", error.message);
