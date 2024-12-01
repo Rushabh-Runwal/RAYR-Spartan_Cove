@@ -57,7 +57,7 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 const registerUser = async (userObj) => {
-  const backend_url = "http://localhost:5002";
+  const backend_url = `http://localhost:5002`;
   const user = userObj.providerData[0];
   try {
     const config = {
@@ -105,6 +105,7 @@ export default function SignUp(props) {
               }
             });
           } else {
+            console.log('Only SJSU members are allowed to sign in.');
             setErrorMessage('Only SJSU members are allowed to sign in.');
             auth.signOut();
           }
