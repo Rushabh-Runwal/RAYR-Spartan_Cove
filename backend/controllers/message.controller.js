@@ -15,12 +15,16 @@ import asyncHander from "express-async-handler";
 export const getAllMessages = asyncHander(async (req, res) => {
   try {
     const groupId = req.params.id;
+    console.log('The group ID we have is' + groupId );
     const message_ids = await Group.findById(groupId).select("messages");
-    const messages = await Message.find({ _id: { $in: message_ids } }).populate(
+    console.log('The messages ids are ' + message_ids )
+    //TODO:Check with Rushabh
+    /*const messages = await Message.find({ _id: { $in: message_ids } }).populate(
       "sender",
       "name email"
-    );
-    res.status(200).json(messages);
+    );*/
+    //console.log('The messages are ' + messages )
+    res.status(200).json(message_ids.messages);
   } catch (error) {
     console.log("error in fetching messages:", error.message);
     res.status(500).json("error in fetching messages:", error.message);

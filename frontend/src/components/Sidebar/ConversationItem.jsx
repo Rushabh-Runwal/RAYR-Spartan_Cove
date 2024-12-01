@@ -17,7 +17,7 @@ const ConversationItem = ({ conversation }) => {
               variant="body2"
               color="text.primary"
             >
-              {conversation.lastMessage}
+              {conversation.lastMessage?.content || ''}
             </Typography>
           </React.Fragment>
         }

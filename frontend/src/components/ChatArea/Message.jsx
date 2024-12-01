@@ -5,8 +5,11 @@ import { useChatState } from '../../context/chatProvider';
 
 const Message = ({ message }) => {
   const { user } = useChatState();
-  const isUser = message.sender === user._id; //TODO: Compare the user with the sender of the message
-
+  let isUser = false;
+  if( message != null || message != undefined)
+    isUser = message.sender === user._id; //TODO: Compare the user with the sender of the message
+  else
+    console.log('Why The fuck is the message null')
   return (
     <Box
       sx={{
@@ -23,7 +26,7 @@ const Message = ({ message }) => {
           borderRadius: 2,
         }}
       >
-        <Typography color={isUser ? 'white' : 'text.primary'}>{message.text}</Typography>
+        <Typography color={isUser ? 'white' : 'text.primary'}>{message.content}</Typography>
       </Box>
     </Box>
   );

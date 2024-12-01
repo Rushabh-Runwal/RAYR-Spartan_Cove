@@ -7,7 +7,7 @@ import { useChatState } from '../../context/chatProvider';
 
 const MessageInput = () => {
   const [ message, setMessage ] = useState('');
-  const { user, selectedChat } = useChatState();
+  const { user, selectedChat, } = useChatState();
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
   };
@@ -22,9 +22,12 @@ const MessageInput = () => {
           },
         };
         
-        await axios.post('${backend_url}/messages', {
+        await axios.post('http://localhost:5002/messages', {
+          senderId: user._id,
+          groupId: selectedChat,
           content: message,
-          chatId: selectedChat._id
+          attachmentUrl: '',
+          messageType:"text" //TODO: Make it dynamic if needed
         }, config);
 
         setMessage('');
@@ -36,7 +39,7 @@ const MessageInput = () => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', p: 2, borderTop: 1, borderColor: 'divider' }}>
       <IconButton>
-        <AttachFileIcon /> // TODO: Implement file attachment functionality
+        <AttachFileIcon /> 
       </IconButton>
       <InputBase
         sx={{ ml: 1, flex: 1 }}
@@ -44,9 +47,9 @@ const MessageInput = () => {
         inputProps={{ 'aria-label': 'type a message' }}
         value={message}
         onChange={handleMessageChange}
-      /> //TODO: Implement message input functionality
+      /> 
       <IconButton color="primary" onClick = {sendMessage}>
-        <SendIcon /> // TODO: Implement send message functionality
+        <SendIcon /> 
       </IconButton>
     </Box>
   );
