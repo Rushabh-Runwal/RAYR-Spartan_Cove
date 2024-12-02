@@ -28,7 +28,6 @@ const ConversationList = ({reloadChats}) => {
    
   }, [reloadChats]);
 
-  // TODO: Refreshing we loose all the progress
   // TODO: The selected chat state does not get set on first click
   return (
     <List sx={{ overflow: 'auto', flexGrow: 1 }}>
@@ -38,11 +37,20 @@ const ConversationList = ({reloadChats}) => {
         onClick={() => {
           setSelectedChat(conv._id);
           console.log("New selected chat:", selectedChat);
-        }}        
-        cursor="pointer"
-        backgroundColor={selectedChat === conv ? "#fff" : "inherit"}
-        color={selectedChat === conv ? "#1a1d21" : "inherit"}
-        borderRadius="lg" >
+        }}
+        sx={{
+          cursor: 'pointer',
+          backgroundColor: selectedChat === conv._id ? 'rgba(25, 118, 210, 0.08)' : 'inherit',
+          color: selectedChat === conv._id ? '#1a1d21' : 'inherit',
+          borderRadius: 'lg',
+          transition: 'background-color 0.3s ease',
+          '&:hover': {
+            backgroundColor: selectedChat === conv._id ? 
+              'rgba(25, 118, 210, 0.12)' : 
+              'rgba(25, 118, 210, 0.04)'
+          }
+        }}
+      >
           <ConversationItem conversation={conv} />
         </Box>
       ))}
