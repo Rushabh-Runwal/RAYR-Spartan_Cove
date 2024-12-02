@@ -20,7 +20,7 @@ const ConversationList = ({reloadChats}) => {
       setGroups(data);
       if (data.length > 0 && !selectedChat) {
         console.log('We are setting chat id')
-        setSelectedChat(data[0]._id);
+        setSelectedChat(data[0]);
         console.log('The default id which will be selected' + data[0]._id )
       }
     }
@@ -35,7 +35,7 @@ const ConversationList = ({reloadChats}) => {
         <Box
         key={conv._id}
         onClick={() => {
-          setSelectedChat(conv._id);
+          setSelectedChat(conv);
           console.log("New selected chat:", selectedChat);
         }}
         sx={{

@@ -1,20 +1,19 @@
 import React from 'react';
 import { Box, IconButton } from '@mui/material';
 import ChatIcon from '@mui/icons-material/Chat';
-import CallIcon from '@mui/icons-material/Call';
-import SettingsIcon from '@mui/icons-material/Settings';
+import { useChatState } from '../../context/chatProvider';
 
 const SidebarFooter = () => {
+  const { setSelectedChat} = useChatState();
   return (
     <Box sx={{ display: 'flex', justifyContent: 'space-around', p: 2 }}>
-      <IconButton>
+      <IconButton onClick={() => {
+        const spartanConversation = {
+          id: 'spartan-ai',
+          name: 'Spartan AI'
+        }
+      }}>
         <ChatIcon />
-      </IconButton>
-      <IconButton>
-        <CallIcon />
-      </IconButton>
-      <IconButton>
-        <SettingsIcon />
       </IconButton>
     </Box>
   );

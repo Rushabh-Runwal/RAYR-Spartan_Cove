@@ -34,6 +34,7 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
         headers: { Authorization: `Bearer ${user.token}`},
       };
       let groupId = selectedChat._id
+      console.log("here at delete group API", selectedChat)
       const { data } = await axios.delete(`${backend_url}/group/${groupId}`, config);
       setSelectedChat(null);
       setReloadChats(prev => !prev);
@@ -42,10 +43,10 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
       console.error('Error deleting group:', error);
     }
   };
-
+  console.log("This is the selected chat", selectedChat?.name[0])
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
-      <Avatar sx={{ mr: 2 }}>selectedChat.avatar ? selectedChat.avatar : R</Avatar>
+      <Avatar sx={{ mr: 2 }}> {selectedChat?.avatar ? selectedChat?.avatar : selectedChat?.name[0] }</Avatar>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>{selectedChat?.name}</Typography>
       <IconButton 
         aria-label="more"

@@ -19,7 +19,7 @@ const MessageList = () => {
       };
     
       try {
-        const response = await axios.get(`${backend_url}/messages/${selectedChat}`, config);
+        const response = await axios.get(`${backend_url}/messages/${selectedChat._id}`, config);
         setMessageList(response.data);
         console.log( 'The length of the response is' + response.data.length)
       } catch (error) {
