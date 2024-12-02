@@ -7,7 +7,7 @@ import { useChatState } from '../../context/chatProvider';
 
 const MessageInput = () => {
   const [ message, setMessage ] = useState('');
-  const { user, selectedChat, } = useChatState();
+  const { user, selectedChat, messageSent, setMessageSent } = useChatState();
   const handleMessageChange = (event) => {
     setMessage(event.target.value);
   };
@@ -31,6 +31,7 @@ const MessageInput = () => {
         }, config);
 
         setMessage('');
+        setMessageSent( true );
       } catch (error) {
         console.error("Error sending message:", error);
       }

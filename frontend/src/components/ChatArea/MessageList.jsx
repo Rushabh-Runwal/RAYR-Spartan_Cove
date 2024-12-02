@@ -6,10 +6,9 @@ import { useChatState } from '../../context/chatProvider';
 
 const MessageList = () => {
   const [messageList, setMessageList] = useState([]);
-  const { user, selectedChat, groups } = useChatState();
+  const { user, selectedChat,messageSent, groups } = useChatState();
 
   useEffect(() => {
-    console.log('rerender triggered')
     const fetchMessages = async () => {
       const backend_url = "http://localhost:5002";
       const config = {
@@ -30,19 +29,13 @@ const MessageList = () => {
 
     if( groups.length > 0 && selectedChat )
       fetchMessages();
-  }, [user, selectedChat]);
+  }, [user, selectedChat, messageSent]);
 
   return (
     <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
-      {(() => {
-        const messageElements = [];
-        for (let i = 0; i < messageList.length; i++) {
-          messageElements.push(
-            <Message key={messageList[i]} message={messageList[i]} />
-          );
-        }
-        return messageElements;
-      })()}
+      {messageList.map((message) => (
+        <Message key={message._id} message={message} />
+      ))}
     </Box>
   );
 };

@@ -5,6 +5,7 @@ const ChatContext = createContext();
 const ChatProvider = ({ children }) => {
   const [user, setUser] = useState();
   const [selectedChat, setSelectedChat] = useState();
+  const [messageSent, setMessageSent] = useState();
   const [groups, setGroups] = useState([]);
   const [notification, setNotification] = useState([]);
   useEffect(() => {
@@ -29,6 +30,8 @@ const ChatProvider = ({ children }) => {
         setUser,
         selectedChat,
         setSelectedChat,
+        messageSent,
+        setMessageSent,
         groups,
         setGroups,
         notification,
