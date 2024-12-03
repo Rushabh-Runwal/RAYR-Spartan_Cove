@@ -6,15 +6,22 @@ import { useChatState } from '../../context/chatProvider';
 const MessageBubble = styled(Box)(({ theme, isUser }) => ({
   padding: theme.spacing(1.5),
   borderRadius: theme.spacing(2),
-  maxWidth: '70%',
   position: 'relative',
+  maxWidth: '60%',
+  minWidth: '120px',
+  marginLeft: isUser ? 'auto' : 0,
+  marginRight: isUser ? 0 : 'auto',
+  wordBreak: 'break-word',
+  whiteSpace: 'normal',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
   ...(isUser ? {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     borderTopRightRadius: 0,
   } : {
-    backgroundColor: theme.palette.grey[100],
-    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.lightBlue ? theme.palette.lightBlue[100] : '#B3E5FC',
+    color: theme.palette.primary .contrastText,
     borderTopLeftRadius: 0,
   }),
 }));

@@ -32,7 +32,7 @@ const MessageList = () => {
   }, [user, selectedChat, messageSent]);
 
   return (
-    <Box sx={{ flexGrow: 1, overflow: 'auto', p: 2 }}>
+    <Box sx={{ flexGrow: 1, overflowY: 'scroll', scrollbarWidth: 'none', padding: 2 }} >
       {messageList.map((message) => (
         <Message key={message._id} message={message} />
       ))}
