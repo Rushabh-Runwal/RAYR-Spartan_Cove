@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import messageRoutes from "./routes/message.route.js";
 import groupRoutes from "./routes/group.route.js";
+import xAIRoutes from "./routes/xai.route.js";
 import { connectDB } from "./config/db.js";
 import events from "events";
 events.EventEmitter.defaultMaxListeners = 15;
@@ -29,6 +30,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/messages", messageRoutes);
 app.use("/group", groupRoutes);
+app.use("/xai", xAIRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
