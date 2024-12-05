@@ -3,11 +3,10 @@ import { Box,Typography, IconButton, Dialog, Button, TextField  } from '@mui/mat
 import EditIcon from '@mui/icons-material/Edit';
 import CreateGroupModal from './CreateGroupDialog';
 import axios from 'axios';
-
+import { BACKEND_URL } from '../../config/config.js';
 
 const SidebarHeader = ({setReloadChats}) => {
   const user = JSON.parse(localStorage.getItem('userInfo'))
-  const backend_url = "http://localhost:5002";
   const config = {
       headers: { Authorization: `Bearer ${user.token}`},
   };
@@ -38,7 +37,7 @@ const SidebarHeader = ({setReloadChats}) => {
         setGroupNameDialog(true);
         return;
       }
-      const { data: group } = await axios.post(`${backend_url}/group`, groupData, config);
+      const { data: group } = await axios.post(`${BACKEND_URL}/group`, groupData, config);
       // console.log("group created", group);
       if (group) {
         handleClose();
@@ -55,7 +54,7 @@ const SidebarHeader = ({setReloadChats}) => {
       admin: user._id,
       participants: [user._id, ...selectedUsersIds],
     };
-    const { data: group } = await axios.post(`${backend_url}/group`, groupData, config);
+    const { data: group } = await axios.post(`${BACKEND_URL}/group`, groupData, config);
     if (group) {
       handleClose();
       setGroupNameDialog(false);
@@ -65,7 +64,7 @@ const SidebarHeader = ({setReloadChats}) => {
   };
   
   const fetchAllUsers = async () => {
-    const { data } = await axios.get(`${backend_url}/users`, config);
+    const { data } = await axios.get(`${BACKEND_URL}/users`, config);
     const filteredUsers = data.filter((u) => u._id !== user._id);
     setAllUsers(filteredUsers);
   }

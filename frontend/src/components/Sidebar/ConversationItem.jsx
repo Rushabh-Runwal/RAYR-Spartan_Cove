@@ -3,8 +3,8 @@ import { ListItem, ListItemAvatar, Avatar, ListItemText, Typography, Badge, Box 
 import { styled } from '@mui/material/styles';
 import io from 'socket.io-client';
 import { useChatState } from '../../context/chatProvider';
-
-const ENDPOINT = "http://localhost:5002";
+import { BACKEND_URL } from '../../config/config.js';
+const ENDPOINT = BACKEND_URL;
 let socket;
 
 const StyledBadge = styled(Badge)(({ theme }) => ({

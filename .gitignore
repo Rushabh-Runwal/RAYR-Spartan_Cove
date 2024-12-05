@@ -9,8 +9,8 @@ lerna-debug.log*
 
 ./package-lock.json
 yarn.lock
-*/package-lock.json
-*/yarn.lock
+*package-lock.json
+*yarn.lock
 
 
 # Diagnostic reports (https://nodejs.org/api/report.html)

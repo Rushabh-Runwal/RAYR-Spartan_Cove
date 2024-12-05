@@ -12,6 +12,7 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import { useChatState } from '../../context/chatProvider';
+import { BACKEND_URL } from '../../config/config.js';
 
 
 const ChatPage = () => {
@@ -21,7 +22,6 @@ const ChatPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef(null);
   const { user } = useChatState();
-  const BACKEND_URL = "http://localhost:5002"; // Replace with your backend URL
   let config = {
     headers: { Authorization: `Bearer ${user.token}`},
   };

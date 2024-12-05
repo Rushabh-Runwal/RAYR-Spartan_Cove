@@ -4,8 +4,10 @@ import ConversationItem from './ConversationItem';
 import axios from 'axios';
 import { useChatState } from '../../context/chatProvider';
 import io from 'socket.io-client';
+import { BACKEND_URL } from '../../config/config.js';
 
-const ENDPOINT = "http://localhost:5002";
+
+const ENDPOINT = BACKEND_URL;
 let socket;
 
 const ConversationList = ({ reloadChats }) => {

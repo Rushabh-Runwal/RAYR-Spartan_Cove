@@ -4,8 +4,10 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import axios from 'axios';
 import io from 'socket.io-client';
 import { useChatState } from '../../context/chatProvider';
+import { BACKEND_URL } from '../../config/config.js';
 
-const ENDPOINT = "http://localhost:5002";
+
+const ENDPOINT = BACKEND_URL;
 let socket;
 
 const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
