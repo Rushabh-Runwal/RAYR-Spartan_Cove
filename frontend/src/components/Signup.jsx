@@ -100,12 +100,12 @@ export default function SignUp(props) {
             registerUser(result.user).then((isUserValid) => {
               if (isUserValid.success) {
                 setUser(isUserValid.data);
-                console.log(isUserValid.data);
+                // console.log(isUserValid.data);
                 navigate('/chats');
               }
             });
           } else {
-            console.log('Only SJSU members are allowed to sign in.');
+            // console.log('Only SJSU members are allowed to sign in.');
             setErrorMessage('Only SJSU members are allowed to sign in.');
             auth.signOut();
           }

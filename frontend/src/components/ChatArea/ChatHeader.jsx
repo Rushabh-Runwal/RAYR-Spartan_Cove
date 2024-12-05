@@ -43,9 +43,9 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
       console.error('Error deleting group:', error);
     }
   };
-  console.log("This is the selected chat", selectedChat?.name[0])
+  // console.log("This is the selected chat", selectedChat?.name[0])
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
+    <Box sx={{ backgroundColor:'#1e88e5', display: 'flex', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
       <Avatar sx={{ mr: 2 }}> {selectedChat?.avatar ? selectedChat?.avatar : selectedChat?.name[0] }</Avatar>
       <Typography variant="h6" sx={{ flexGrow: 1 }}>{selectedChat?.name}</Typography>
       <IconButton 

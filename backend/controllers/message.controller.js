@@ -16,12 +16,11 @@ export const getAllMessages = asyncHander(async (req, res) => {
   try {
     const groupId = req.params.id;
     const message_ids = await Group.findById(groupId).select("messages");
-    const messages = await Message.find({ _id: { $in: message_ids.messages } }).populate(
-      "sender",
-      "name email"
-    );
-    
-    console.log('The messages are ' + messages )
+    const messages = await Message.find({
+      _id: { $in: message_ids.messages },
+    }).populate("sender", "name email");
+
+    // console.log('The messages are ' + messages )
     res.status(200).json(messages);
   } catch (error) {
     console.log("error in fetching messages:", error.message);

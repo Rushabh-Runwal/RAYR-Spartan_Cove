@@ -25,20 +25,21 @@ const SidebarHeader = ({setReloadChats}) => {
   };
 
   const createNewGroup = async () => {
-    console.log("Creating new group");
+    // console.log("Creating new group"); 
     if (selectedUsers.length > 0) {
       let selectedUsersIds = selectedUsers.map((user) => user._id);
       const groupData = {
-        name: groupName || `New Group ${new Date().getTime()}`,
+        name: groupName || `Group ${new Date().getTime()}`,
         admin: user._id,
         participants: [user._id, ...selectedUsersIds],
       };
+      console.log("groupData", groupData);
       if (groupData?.participants.length > 2) {
         setGroupNameDialog(true);
         return;
       }
       const { data: group } = await axios.post(`${backend_url}/group`, groupData, config);
-      console.log("group created", group);
+      // console.log("group created", group);
       if (group) {
         handleClose();
         setGroupNameDialog(false);

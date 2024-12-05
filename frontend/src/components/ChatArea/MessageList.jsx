@@ -6,7 +6,7 @@ import { useChatState } from '../../context/chatProvider';
 
 const MessageList = () => {
   const [messageList, setMessageList] = useState([]);
-  const { user, selectedChat,messageSent, groups } = useChatState();
+  const { user, selectedChat, messageSent, groups } = useChatState();
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -20,7 +20,7 @@ const MessageList = () => {
     
       try {
         const response = await axios.get(`${backend_url}/messages/${selectedChat._id}`, config);
-        setMessageList(response.data);
+        setMessageList(response?.data);
         console.log( 'The length of the response is' + response.data.length)
       } catch (error) {
         console.log("Error fetching messages:", error);
