@@ -6,8 +6,9 @@
     "test": "echo \"Sucessfully executed TestCases\"",
     "dev": "NODE_ENV=development nodemon backend/server.js",
     "build": "npm install && npm install --prefix frontend && npm run build --prefix frontend",
-    "start": "NODE_ENV=production node backend/server.js",
-    "clean": "rm -rf node_modules && rm -rf frontend/build && rm -rf backend/build"
+    "start": "NODE_ENV=production nodemon backend/server.js",
+    "clean": "rm -rf node_modules && rm -rf frontend/build && rm -rf backend/build",
+    "start:all": "concurrently \"npm run dev\" \"npm start --prefix frontend\""
   },
   "type": "module",
   "keywords": [],
@@ -30,6 +31,7 @@
     "socket.io-client": "^4.8.1"
   },
   "devDependencies": {
+    "concurrently": "^9.1.0",
     "nodemon": "^3.1.7"
   }
 }

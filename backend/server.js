@@ -32,7 +32,7 @@ app.use("/messages", messageRoutes);
 app.use("/group", groupRoutes);
 app.use("/xai", xAIRoutes);
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 2;
 const server = app.listen(PORT, () => {
   connectDB();
   console.log("Server started at http://localhost:" + PORT);
@@ -69,12 +69,12 @@ io.on("connection", (socket) => {
 
   socket.on("new message", (messageData) => {
     const group = messageData.chat;
-    
+
     if (!group.users) return;
 
     group.users.forEach((user) => {
       if (user._id === messageData.sender._id) return;
-      
+
       socket.to(user._id).emit("stop typing");
       socket.to(user._id).emit("message received", messageData);
     });
@@ -93,17 +93,19 @@ io.on("connection", (socket) => {
       socket.to(user._id).emit("group updated", updatedGroup);
     });
   });
-   // Track unread messages per conversation
+  // Track unread messages per conversation
   socket.on("mark conversation read", ({ conversationId, userId }) => {
-    socket.to(conversationId).emit("conversation read", { conversationId, userId });
+    socket
+      .to(conversationId)
+      .emit("conversation read", { conversationId, userId });
   });
 
   // Last message updates
   socket.on("update last message", (conversationData) => {
     const { conversationId, message } = conversationData;
-    socket.to(conversationId).emit("last message updated", { 
-      conversationId, 
-      message 
+    socket.to(conversationId).emit("last message updated", {
+      conversationId,
+      message,
     });
   });
 
@@ -140,9 +142,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    const userId = Array.from(activeUsers.entries())
-      .find(([_, socketId]) => socketId === socket.id)?.[0];
-    
+    const userId = Array.from(activeUsers.entries()).find(
+      ([_, socketId]) => socketId === socket.id
+    )?.[0];
+
     if (userId) {
       activeUsers.delete(userId);
       io.emit("user offline", userId);

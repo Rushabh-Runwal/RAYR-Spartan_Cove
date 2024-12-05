@@ -2,7 +2,9 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 
 dotenv.config();
-const mongoUri = process.env.MONGO_URI;
+// const mongoUri = process.env.MONGO_URI;
+const mongoUri =
+  "mongodb+srv://yashashwin98:Test$1234@spartancove.r3sth.mongodb.net/?retryWrites=true&w=majority&appName=SpartanCove";
 // console.log("mongoUri", mongoUri);
 export const connectDB = async () => {
   try {
