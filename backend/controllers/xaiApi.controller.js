@@ -6,6 +6,7 @@ export async function saveChat(userId, role, content) {
   let chatSession = await AIChat.findOne({ userId });
   chatSession.messages.push({ role, content });
   await chatSession.save();
+
   return chatSession;
 }
 
@@ -15,19 +16,19 @@ export async function getChatHistory(userId) {
     // Create a new chat session if none exists
     chatSession = await AIChat.create({ userId });
   }
-  return chatSession;
+  return chatSession.messages;
 }
 
 export async function getGrokResponse(userId, userQuery, onStreamData) {
   // Fetch chat history
   const previousMessages = await getChatHistory(userId);
-  // console.log("Previous Messages:", );
+
   const url = "https://api.x.ai/v1/chat/completions";
   const apiKey = process.env.XAI_API_KEY;
 
   const payload = {
     messages: [
-      ...previousMessages.messages,
+      ...previousMessages,
       {
         role: "user",
         content: userQuery,
@@ -77,7 +78,7 @@ export async function getGrokResponse(userId, userQuery, onStreamData) {
           // save all data in the database
           if (jsonLine === "[DONE]") {
             // Stream end signal
-            console.log("Stream completed. , response saved in database");
+            console.log("Stream completed.");
             return;
           }
 
