@@ -16,7 +16,7 @@ export async function getChatHistory(userId) {
     // Create a new chat session if none exists
     chatSession = await AIChat.create({ userId });
   }
-  return chatSession.messages;
+  return chatSession;
 }
 
 export async function getGrokResponse(userId, userQuery, onStreamData) {
@@ -28,7 +28,7 @@ export async function getGrokResponse(userId, userQuery, onStreamData) {
 
   const payload = {
     messages: [
-      ...previousMessages,
+      ...previousMessages.messages,
       {
         role: "user",
         content: userQuery,

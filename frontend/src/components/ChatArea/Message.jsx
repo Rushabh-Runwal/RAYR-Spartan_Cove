@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Avatar, Typography, styled } from '@mui/material';
 import { useChatState } from '../../context/chatProvider';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import DoneIcon from '@mui/icons-material/Done';
 
-// Styled components for custom message bubbles
 const MessageBubble = styled(Box)(({ theme, isUser }) => ({
   padding: theme.spacing(1.5),
   borderRadius: theme.spacing(2),
@@ -15,19 +16,21 @@ const MessageBubble = styled(Box)(({ theme, isUser }) => ({
   whiteSpace: 'normal',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
+  animation: 'fadeIn 0.3s ease-in',
   ...(isUser ? {
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     borderTopRightRadius: 0,
   } : {
     backgroundColor: theme.palette.lightBlue ? theme.palette.lightBlue[100] : '#B3E5FC',
-    color: theme.palette.primary .contrastText,
+    color: theme.palette.primary.contrastText,
     borderTopLeftRadius: 0,
   }),
 }));
 
 const Message = ({ message }) => {
   const { user } = useChatState();
+  const [messageStatus, setMessageStatus] = useState('sent');
   const isUser = message?.sender._id === user._id;
 
   const formatTime = (dateString) => {
@@ -37,6 +40,16 @@ const Message = ({ message }) => {
     });
   };
 
+  const renderMessageStatus = () => {
+    if (!isUser) return null;
+    
+    return messageStatus === 'read' ? (
+      <DoneAllIcon sx={{ fontSize: 16, color: 'primary.light' }} />
+    ) : (
+      <DoneIcon sx={{ fontSize: 16, color: 'primary.light' }} />
+    );
+  };
+
   return (
     <Box
       sx={{
@@ -44,6 +57,11 @@ const Message = ({ message }) => {
         justifyContent: isUser ? 'flex-end' : 'flex-start',
         mb: 2,
         width: '100%',
+        '&:hover': {
+          '& .message-actions': {
+            opacity: 1,
+          },
+        },
       }}
     >
       <Box
@@ -54,7 +72,6 @@ const Message = ({ message }) => {
           gap: 1,
         }}
       >
-        {/* Profile Picture - Only show for non-user messages */}
         {!isUser && (
           <Avatar
             src={message.sender.profilePicture}
@@ -67,7 +84,6 @@ const Message = ({ message }) => {
         )}
 
         <Box>
-          {/* Sender Name - Only show for non-user messages */}
           {!isUser && (
             <Typography
               variant="subtitle2"
@@ -81,27 +97,37 @@ const Message = ({ message }) => {
             </Typography>
           )}
 
-          {/* Message Bubble */}
           <MessageBubble isUser={isUser}>
             <Typography variant="body2">
               {message.content}
             </Typography>
             
-            {/* Timestamp */}
-            <Typography
-              variant="caption"
-              sx={{
-                display: 'block',
-                mt: 0.5,
-                color: isUser ? 'primary.light' : 'text.secondary',
-                textAlign: 'right',
-              }}
-            >
-              {formatTime(message.createdAt)}
-            </Typography>
+            <Box sx={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'flex-end',
+              gap: 0.5 
+            }}>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: isUser ? 'primary.light' : 'text.secondary',
+                }}
+              >
+                {formatTime(message.createdAt)}
+              </Typography>
+              {renderMessageStatus()}
+            </Box>
           </MessageBubble>
         </Box>
       </Box>
+
+      <style jsx>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </Box>
   );
 };
