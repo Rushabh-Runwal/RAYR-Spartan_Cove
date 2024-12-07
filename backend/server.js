@@ -32,7 +32,10 @@ app.use("/group", groupRoutes);
 
 // Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  connectDB();
-  console.log("Server started at http://localhost:" + PORT);
-});
+
+if (process.env.NODE_ENV !== "test") {
+  app.listen(PORT, () => {
+    connectDB();
+    console.log("Server started at http://localhost:" + PORT);
+  });
+}
