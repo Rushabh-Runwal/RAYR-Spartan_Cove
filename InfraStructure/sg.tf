@@ -26,52 +26,22 @@ resource "aws_security_group" "allow_ssh_http_from_bastion_west1" {
   }
 }
 
-# Security Groups for us-west-2
-resource "aws_security_group" "allow_ssh_http_west2" {
-  provider    = aws.usw2
-  name        = "allow_ssh_http_2"
-  description = "Allow TLS inbound traffic and all outbound traffic"
-  vpc_id      = module.vpc_west2.vpc_id
-  tags = {
-    Name = "allow_ssh_http_2"
-  }
-}
-
-resource "aws_security_group" "icmp_sg_west2" {
-  provider    = aws.usw2
-  name        = "allow_icmp_2"
-  description = "Allow all ICMP traffic"
-  vpc_id      = module.vpc_west2.vpc_id
-  tags = {
-    Name = "allow_icmp_2"
-  }
-}
-
-resource "aws_security_group" "allow_ssh_http_from_bastion_west2" {
-  provider    = aws.usw2
-  name        = "allow_ssh_http_from_bastion_2"
-  description = "Allow ssh from the bastion in the vpc"
-  vpc_id      = module.vpc_west2.vpc_id
-  tags = {
-    Name = "allow_ssh_from_bastion_2"
-  }
-}
 
 # Rules for us-west-1
 resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4_west1" {
   security_group_id = aws_security_group.allow_ssh_http_west1.id
-  from_port        = 80
+  from_port        = 0
   cidr_ipv4        = "0.0.0.0/0"
   ip_protocol      = "tcp"
-  to_port          = 80
+  to_port          = 0
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv6_west1" {
   security_group_id = aws_security_group.allow_ssh_http_west1.id
-  from_port        = 80
+  from_port        = 0
   cidr_ipv6        = "::/0"
   ip_protocol      = "tcp"
-  to_port          = 80
+  to_port          = 0
 }
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4_west1" {
@@ -162,119 +132,4 @@ resource "aws_vpc_security_group_egress_rule" "allow_sqs_access" {
   to_port          = 443
   ip_protocol      = "tcp"
   cidr_ipv4        = "0.0.0.0/0"  # To reach AWS SQS endpoints
-}
-
-# Rules for us-west-2
-resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_west2.id
-  from_port        = 80
-  cidr_ipv4        = "0.0.0.0/0"
-  ip_protocol      = "tcp"
-  to_port          = 80
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv6_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_west2.id
-  from_port        = 80
-  cidr_ipv6        = "::/0"
-  ip_protocol      = "tcp"
-  to_port          = 80
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv4_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_west2.id
-  from_port        = 22
-  cidr_ipv4        = "0.0.0.0/0"
-  ip_protocol      = "tcp"
-  to_port          = 22
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_ssh_ipv6_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_west2.id
-  from_port        = 22
-  cidr_ipv6        = "::/0"
-  ip_protocol      = "tcp"
-  to_port          = 22
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv4_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_west2.id
-  cidr_ipv4        = "0.0.0.0/0"
-  ip_protocol      = "-1"
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_traffic_ipv6_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_west2.id
-  cidr_ipv6        = "::/0"
-  ip_protocol      = "-1"
-}
-
-resource "aws_security_group_rule" "allow_ssh_from_bastion_west2" {
-  provider                 = aws.usw2
-  type                     = "ingress"
-  from_port                = 22
-  to_port                  = 22
-  protocol                 = "tcp"
-  security_group_id        = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  source_security_group_id = aws_security_group.allow_ssh_http_west2.id
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_bastiontraffic_ipv4_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  cidr_ipv4        = "0.0.0.0/0"
-  ip_protocol      = "-1"
-}
-
-resource "aws_vpc_security_group_egress_rule" "allow_all_bastiontraffic_ipv6_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  cidr_ipv6        = "::/0"
-  ip_protocol      = "-1"
-}
-
-
-resource "aws_security_group_rule" "private_http_access_west2" {
-  provider                = aws.usw2
-  type                     = "ingress"
-  from_port               = 8080
-  to_port                 = 8080
-  protocol                = "tcp"
-  description             = "HTTP Access from frontend server"
-  security_group_id       = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  source_security_group_id = aws_security_group.allow_ssh_http_west2.id
-}
-
-resource "aws_security_group_rule" "private_db_access_west2" {
-  provider                = aws.usw2
-  type                     = "ingress"
-  from_port               = 5432
-  to_port                 = 5432
-  protocol                = "tcp"
-  description             = "SSH Access from frontend server"
-  security_group_id       = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  source_security_group_id =aws_security_group.allow_ssh_http_west2.id
-}
-resource "aws_vpc_security_group_egress_rule" "allow_sqs_access_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  from_port        = 443
-  to_port          = 443
-  ip_protocol      = "tcp"
-  cidr_ipv4        = "0.0.0.0/0"
-}
-
-resource "aws_vpc_security_group_ingress_rule" "allow_sqs_responses_west2" {
-  provider         = aws.usw2
-  security_group_id = aws_security_group.allow_ssh_http_from_bastion_west2.id
-  from_port        = 443
-  to_port          = 443
-  ip_protocol      = "tcp"
-  cidr_ipv4        = "0.0.0.0/0"
 }
