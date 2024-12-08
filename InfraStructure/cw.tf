@@ -54,36 +54,9 @@ resource "aws_cloudwatch_metric_alarm" "asg_status_check_west1" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "asg_status_check_west2" {
-  provider           = aws.usw2
-  alarm_name          = "asg-status-check-failed-west2"
-  comparison_operator = "GreaterThanThreshold"
-  evaluation_periods  = "2"
-  metric_name        = "StatusCheckFailed"
-  namespace          = "AWS/EC2"
-  period             = "60"
-  statistic          = "Maximum"
-  threshold          = "0"
-  
-  dimensions = {
-    AutoScalingGroupName = aws_autoscaling_group.spartanchat2.name
-  }
-}
-
 # EventBridge Rules
 resource "aws_cloudwatch_event_rule" "restart_asg_west1" {
   name        = "restart-asg-instances-west1"
-  description = "Restart ASG instances on status check failure"
-
-  event_pattern = jsonencode({
-    source      = ["aws.cloudwatch"]
-    detail-type = ["CloudWatch Alarm State Change"]
-  })
-}
-
-resource "aws_cloudwatch_event_rule" "restart_asg_west2" {
-  provider    = aws.usw2
-  name        = "restart-asg-instances-west2"
   description = "Restart ASG instances on status check failure"
 
   event_pattern = jsonencode({
@@ -101,17 +74,5 @@ resource "aws_cloudwatch_event_target" "restart_asg_target_west1" {
   
   input = jsonencode({
     AutoScalingGroupName = aws_autoscaling_group.spartanchat1.name
-  })
-}
-
-resource "aws_cloudwatch_event_target" "restart_asg_target_west2" {
-  provider  = aws.usw2
-  rule      = aws_cloudwatch_event_rule.restart_asg_west2.name
-  target_id = "RestartASGInstances"
-  arn       = "arn:aws:ssm:us-west-2:${data.aws_caller_identity.current.account_id}:automation-definition/AWS-RestartEC2Instance"
-  role_arn  = aws_iam_role.eventbridge_role.arn
-  
-  input = jsonencode({
-    AutoScalingGroupName = aws_autoscaling_group.spartanchat2.name
   })
 }
