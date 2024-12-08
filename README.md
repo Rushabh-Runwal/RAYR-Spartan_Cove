@@ -1,6 +1,8 @@
 # RAYR_Spartan_Cove
 ## CMPE-272 Project
 
+# [Video Demo on YouTube](https://youtu.be/HTU1k8cqlZ0)
+
 # SJSU Real-time Chat Application
 
 A feature-rich real-time chat application built exclusively for San Jose State University students using the MERN (MongoDB, Express.js, React.js, Node.js) stack.
@@ -21,7 +23,7 @@ A feature-rich real-time chat application built exclusively for San Jose State U
 - Backend: Node.js, Express.js
 - Database: MongoDB
 - Real-time Communication: Socket.io
-- Authentication: JWT
+- Authentication: Google SSO
 
 ## Prerequisites
 
