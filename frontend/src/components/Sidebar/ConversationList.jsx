@@ -71,7 +71,7 @@ const ConversationList = ({ reloadChats }) => {
 
   return (
     <List sx={{ overflow: 'auto', flexGrow: 1 }}>
-      {groups.map((conv) => (
+      {groups?.map((conv) => (
         <Box
           key={conv._id}
           onClick={() => handleChatSelect(conv)}
