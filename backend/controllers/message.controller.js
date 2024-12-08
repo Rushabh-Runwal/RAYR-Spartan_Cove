@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import Message from "../models/Message.model.js";
+import Message from "../models/message.model.js";
 import Group from "../models/group.model.js";
 import asyncHander from "express-async-handler";
 
