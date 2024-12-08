@@ -23,7 +23,7 @@ A feature-rich real-time chat application built exclusively for San Jose State U
 - Backend: Node.js, Express.js
 - Database: MongoDB
 - Real-time Communication: Socket.io
-- Authentication: JWT
+- Authentication: Google SSO
 
 ## Prerequisites
 
