@@ -13,6 +13,7 @@ import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import { useChatState } from '../context/chatProvider';
+import { BACKEND_URL } from '../config/config';
 // Styled components
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -57,7 +58,6 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 
 
 const registerUser = async (userObj) => {
-  const backend_url = `http://localhost:5002`;
   const user = userObj.providerData[0];
   try {
     const config = {
@@ -65,7 +65,7 @@ const registerUser = async (userObj) => {
         "Content-type": "application/json",
       },
     };
-    const { data } = await axios.post(`${backend_url}/users`,
+    const { data } = await axios.post(`${BACKEND_URL}/users`,
       {
         "uid": userObj.uid,
         "name": user.displayName,
@@ -100,12 +100,12 @@ export default function SignUp(props) {
             registerUser(result.user).then((isUserValid) => {
               if (isUserValid.success) {
                 setUser(isUserValid.data);
-                console.log(isUserValid.data);
+                // console.log(isUserValid.data);
                 navigate('/chats');
               }
             });
           } else {
-            console.log('Only SJSU members are allowed to sign in.');
+            // console.log('Only SJSU members are allowed to sign in.');
             setErrorMessage('Only SJSU members are allowed to sign in.');
             auth.signOut();
           }

@@ -8,6 +8,7 @@ const ChatProvider = ({ children }) => {
   const [messageSent, setMessageSent] = useState();
   const [groups, setGroups] = useState([]);
   const [notification, setNotification] = useState([]);
+  const [aiChatActivate, setAiChatActivate] = useState(true);
   useEffect(() => {
     const userInfo = localStorage.getItem("userInfo");
 
@@ -36,6 +37,8 @@ const ChatProvider = ({ children }) => {
         setGroups,
         notification,
         setNotification,
+        aiChatActivate,
+        setAiChatActivate,
       }}
     >
       {children}

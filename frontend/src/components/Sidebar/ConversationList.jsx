@@ -1,56 +1,93 @@
 import React, { useEffect, useState } from 'react';
-import {Box, List } from '@mui/material';
+import { Box, List } from '@mui/material';
 import ConversationItem from './ConversationItem';
 import axios from 'axios';
 import { useChatState } from '../../context/chatProvider';
-const ConversationList = ({reloadChats}) => {
-  const [loggedUser, setLoggedUser] = useState();
+import io from 'socket.io-client';
+import { BACKEND_URL } from '../../config/config.js';
 
-  const { selectedChat, setSelectedChat, groups, setGroups } = useChatState();
+
+const ENDPOINT = BACKEND_URL;
+let socket;
+
+const ConversationList = ({ reloadChats }) => {
+  const [loggedUser, setLoggedUser] = useState();
+  const { selectedChat, setSelectedChat, groups, setGroups, setAiChatActivate } = useChatState();
+
+  useEffect(() => {
+    const user = JSON.parse(localStorage.getItem('userInfo'));
+    setLoggedUser(user);
+    
+    // Initialize socket connection
+    socket = io(ENDPOINT);
+    socket.emit("setup", user);
+    
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   useEffect(() => {
     const fetchChats = async () => {
-      console.log('rerender triggered')
-      const user = JSON.parse(localStorage.getItem('userInfo'))
-      const backend_url = "http://localhost:5002";
+      const user = JSON.parse(localStorage.getItem('userInfo'));
       const config = {
-          headers: { Authorization: `Bearer ${user.token}`},
-        };
-      const { data } = await axios.get(`${backend_url}/group`, config);
+        headers: { Authorization: `Bearer ${user.token}`},
+      };
+
+      const { data } = await axios.get(`${ENDPOINT}/group`, config);
       setGroups(data);
+
       if (data.length > 0 && !selectedChat) {
-        console.log('We are setting chat id')
         setSelectedChat(data[0]);
-        console.log('The default id which will be selected' + data[0]._id )
       }
-    }
+    };
+
     fetchChats();
-   
+
+    // Socket listeners for real-time updates
+    socket.on("group updated", (updatedGroup) => {
+      setGroups((prevGroups) => {
+        return prevGroups.map((group) => 
+          group._id === updatedGroup._id ? updatedGroup : group
+        );
+      });
+    });
+
+    socket.on("new group", (newGroup) => {
+      setGroups((prevGroups) => [...prevGroups, newGroup]);
+    });
+
+    return () => {
+      socket.off("group updated");
+      socket.off("new group");
+    };
   }, [reloadChats]);
 
-  // TODO: The selected chat state does not get set on first click
+  const handleChatSelect = (conv) => {
+    setSelectedChat(conv);
+    setAiChatActivate(false)
+    socket.emit("join chat", conv._id);
+  };
+
   return (
     <List sx={{ overflow: 'auto', flexGrow: 1 }}>
-      {groups.map((conv) => (
+      {groups?.map((conv) => (
         <Box
-        key={conv._id}
-        onClick={() => {
-          setSelectedChat(conv);
-          console.log("New selected chat:", selectedChat);
-        }}
-        sx={{
-          cursor: 'pointer',
-          backgroundColor: selectedChat === conv._id ? 'rgba(25, 118, 210, 0.08)' : 'inherit',
-          color: selectedChat === conv._id ? '#1a1d21' : 'inherit',
-          borderRadius: 'lg',
-          transition: 'background-color 0.3s ease',
-          '&:hover': {
-            backgroundColor: selectedChat === conv._id ? 
-              'rgba(25, 118, 210, 0.12)' : 
-              'rgba(25, 118, 210, 0.04)'
-          }
-        }}
-      >
+          key={conv._id}
+          onClick={() => handleChatSelect(conv)}
+          sx={{
+            cursor: 'pointer',
+            backgroundColor: selectedChat?._id === conv._id ? 'rgba(25, 118, 210, 0.08)' : 'inherit',
+            color: selectedChat?._id === conv._id ? '#1a1d21' : 'inherit',
+            borderRadius: 'lg',
+            transition: 'background-color 0.3s ease',
+            '&:hover': {
+              backgroundColor: selectedChat?._id === conv._id ?
+                'rgba(25, 118, 210, 0.12)' :
+                'rgba(25, 118, 210, 0.04)'
+            }
+          }}
+        >
           <ConversationItem conversation={conv} />
         </Box>
       ))}

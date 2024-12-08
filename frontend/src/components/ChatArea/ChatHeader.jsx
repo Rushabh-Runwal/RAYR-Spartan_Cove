@@ -1,11 +1,45 @@
-import React, { useState } from 'react';
-import { Box, Typography, IconButton, Avatar, Menu, MenuItem } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, IconButton, Avatar, Menu, MenuItem, Badge } from '@mui/material';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import axios from 'axios';
+import io from 'socket.io-client';
+import { useChatState } from '../../context/chatProvider';
+import { BACKEND_URL } from '../../config/config.js';
+
+
+const ENDPOINT = BACKEND_URL;
+let socket;
 
 const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
   const [anchorEl, setAnchorEl] = useState(null);
+  const [isTyping, setIsTyping] = useState(false);
+  const [onlineUsers, setOnlineUsers] = useState([]);
+  const { user } = useChatState();
   const open = Boolean(anchorEl);
+
+  useEffect(() => {
+    socket = io(ENDPOINT);
+
+    socket.on("typing", () => setIsTyping(true));
+    socket.on("stop typing", () => setIsTyping(false));
+    
+    socket.on("user online", (users) => {
+      setOnlineUsers(users);
+    });
+
+    socket.on("group updated", (updatedGroup) => {
+      if (selectedChat?._id === updatedGroup._id) {
+        setSelectedChat(updatedGroup);
+      }
+    });
+
+    return () => {
+      socket.off("typing");
+      socket.off("stop typing");
+      socket.off("user online");
+      socket.off("group updated");
+    };
+  }, [selectedChat]);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
@@ -17,8 +51,16 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
 
   const handleUpdateGroup = async () => {
     try {
-      const response = await axios.put(`/groups/${selectedChat.Id}/update`);
-      // Handle successful update
+      const user = JSON.parse(localStorage.getItem('userInfo'));
+      const config = {
+        headers: { Authorization: `Bearer ${user.token}`},
+      };
+      
+      const response = await axios.put(`${ENDPOINT}/group/${selectedChat._id}/update`, {
+        // Add update data here
+      }, config);
+      
+      socket.emit("group update", response.data);
       handleClose();
     } catch (error) {
       console.error('Error updating group:', error);
@@ -27,15 +69,13 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
 
   const handleDeleteGroup = async () => {
     try {
-      const user = JSON.parse(localStorage.getItem('userInfo'))
-      const backend_url = `http://localhost:5002`;
-
+      const user = JSON.parse(localStorage.getItem('userInfo'));
       const config = {
         headers: { Authorization: `Bearer ${user.token}`},
       };
-      let groupId = selectedChat._id
-      console.log("here at delete group API", selectedChat)
-      const { data } = await axios.delete(`${backend_url}/group/${groupId}`, config);
+      
+      await axios.delete(`${ENDPOINT}/group/${selectedChat._id}`, config);
+      socket.emit("group deleted", selectedChat._id);
       setSelectedChat(null);
       setReloadChats(prev => !prev);
       handleClose();
@@ -43,12 +83,44 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
       console.error('Error deleting group:', error);
     }
   };
-  console.log("This is the selected chat", selectedChat?.name[0])
+
+  const isGroupOnline = selectedChat?.users?.some(u => 
+    onlineUsers.includes(u._id) && u._id !== user._id
+  );
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center', p: 2, borderBottom: 1, borderColor: 'divider' }}>
-      <Avatar sx={{ mr: 2 }}> {selectedChat?.avatar ? selectedChat?.avatar : selectedChat?.name[0] }</Avatar>
-      <Typography variant="h6" sx={{ flexGrow: 1 }}>{selectedChat?.name}</Typography>
-      <IconButton 
+    <Box sx={{ 
+      display: 'flex', 
+      alignItems: 'center', 
+      p: 2, 
+      borderBottom: 1, 
+      borderColor: 'divider',
+      backgroundColor: 'background.paper' 
+    }}>
+      <Badge
+        overlap="circular"
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        variant="dot"
+        color="success"
+        invisible={!isGroupOnline}
+      >
+        <Avatar sx={{ mr: 2 }}>
+          {selectedChat?.avatar || selectedChat?.name[0]}
+        </Avatar>
+      </Badge>
+      
+      <Box sx={{ flexGrow: 1 }}>
+        <Typography variant="h6">
+          {selectedChat?.name}
+        </Typography>
+        {isTyping && (
+          <Typography variant="caption" color="text.secondary">
+            Someone is typing...
+          </Typography>
+        )}
+      </Box>
+
+      <IconButton
         aria-label="more"
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
@@ -57,6 +129,7 @@ const ChatHeader = ({selectedChat, setSelectedChat, setReloadChats}) => {
       >
         <MoreVertIcon />
       </IconButton>
+
       <Menu
         id="basic-menu"
         anchorEl={anchorEl}
